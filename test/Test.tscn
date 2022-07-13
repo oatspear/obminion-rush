@@ -1,0 +1,27 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://test/Test.gd" type="Script" id=1]
+[ext_resource path="res://scenes/characters/Human.tscn" type="PackedScene" id=2]
+[ext_resource path="res://scenes/characters/Orc.tscn" type="PackedScene" id=3]
+
+[sub_resource type="Curve2D" id=1]
+bake_interval = 10.0
+_data = {
+"points": PoolVector2Array( 0, 0, 0, 0, 24, 232, 0, 0, 0, 0, 24, 24, 0, 0, 0, 0, 152, 24, 0, 0, 0, 0, 152, 232 )
+}
+
+[node name="Test" type="Node2D"]
+script = ExtResource( 1 )
+
+[node name="Path" type="Path2D" parent="."]
+curve = SubResource( 1 )
+
+[node name="YSort" type="YSort" parent="."]
+
+[node name="Human" parent="YSort" instance=ExtResource( 2 )]
+position = Vector2( 80, 256 )
+patrol_path = NodePath("../../Path")
+patrol_loop = true
+
+[node name="Orc" parent="YSort" instance=ExtResource( 3 )]
+position = Vector2( 120, 136 )
