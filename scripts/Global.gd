@@ -12,3 +12,13 @@ const SOUTHWEST: Vector2 = Vector2(-_UNIT_NORMAL, _UNIT_NORMAL)
 const SOUTHEAST: Vector2 = Vector2(_UNIT_NORMAL, _UNIT_NORMAL)
 
 enum Direction { N, S, E, W, NW, NE, SW, SE }
+
+const UNIT_HITBOX: int = 12  # pixels (length)
+const MELEE_RANGE: int = UNIT_HITBOX  # circle radius
+
+# bonus on top of MELEE_RANGE
+enum AttackRange {
+    MELEE = 0,
+    SHORT_RANGE = UNIT_HITBOX * 3,
+    LONG_RANGE = UNIT_HITBOX * 5,
+}

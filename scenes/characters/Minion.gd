@@ -6,14 +6,18 @@ extends KinematicBody2D
 
 const EPSILON = 1.0
 
-enum FSM { IDLE, WALK }
+enum FSM { IDLE, WALK, ATTACK }
 
 ################################################################################
 # Attributes
 ################################################################################
 
+export (int) var team: int = 0
+export (int) var health: int = 20
+export (Global.AttackRange) var attack_range = Global.AttackRange.MELEE
+
 export (float) var move_speed = 30.0  # pixels / sec
-export (NodePath) var patrol_path
+export (NodePath) var patrol_path = null
 export (bool) var patrol_loop = false
 
 var state: int = FSM.IDLE
@@ -21,20 +25,42 @@ var state: int = FSM.IDLE
 var patrol_points
 var patrol_index: int = 0
 
+var attack_target = null
+
 var velocity: Vector2 = Vector2.ZERO
 
 onready var sprite: AnimatedSprite = $Sprite
+onready var range_area: Area2D = $Range
 
 
 ################################################################################
 # Interface
 ################################################################################
 
-func set_patrol_path(path: NodePath):
+func set_patrol_path(path):
     patrol_path = path
-    if path:
+    if path != null:
         patrol_points = get_node(path).curve.get_baked_points()
         patrol_index = 0
+
+
+################################################################################
+# Event Handlers
+################################################################################
+
+func _on_Range_body_entered(body):
+    if not body is KinematicBody2D:
+        return
+    if body.team == team:
+        return
+    _enter_attack(body)
+
+
+func _on_Range_body_exited(body):
+    if body == attack_target:
+        attack_target = null
+        if state == FSM.ATTACK:
+            state = FSM.IDLE
 
 
 ################################################################################
@@ -42,7 +68,9 @@ func set_patrol_path(path: NodePath):
 ################################################################################
 
 func _ready():
+    sprite.animation = "default"
     set_patrol_path(patrol_path)
+    $Range/Area.shape.radius = Global.MELEE_RANGE + attack_range
 
 
 func _process(delta):
@@ -63,6 +91,13 @@ func _physics_process(delta):
             pass
 
 
+func _enter_attack(target: Node2D):
+    assert(target.team != team)
+    state = FSM.ATTACK
+    attack_target = target
+    sprite.animation = "punch"
+    sprite.flip_h = target.position.x < position.x
+
 
 ################################################################################
 # Helper Functions
@@ -82,20 +117,39 @@ func _physics_process_walk(delta):
     if !patrol_path:
         return
     var target = patrol_points[patrol_index]
-    if position.distance_to(target) < EPSILON:
+    velocity = _aim(target)
+    if velocity == Vector2.ZERO:
         patrol_index += 1
         if patrol_index >= patrol_points.size():
             patrol_index = 0
             if not patrol_loop:
                 patrol_path = null
                 patrol_points = null
-                velocity = Vector2.ZERO
                 return
         target = patrol_points[patrol_index]
-    velocity = (target - position).normalized() * move_speed
-    if abs(velocity.x) < EPSILON:
-        velocity.x = 0
-    if abs(velocity.y) < EPSILON:
-        velocity.y = 0
-    velocity = move_and_slide(velocity)
+        velocity = _aim(target)
     sprite.flip_h = velocity.x < 0
+    velocity *= move_speed * delta
+    var _collision = move_and_collide(velocity)
+
+
+func _aim(target: Vector2) -> Vector2:
+    var dx = target.x - position.x
+    var dy = target.y - position.y
+    if dx < -EPSILON:
+        if dy < -EPSILON:
+            return Global.NORTHWEST
+        if dy > EPSILON:
+            return Global.SOUTHWEST
+        return Global.WEST
+    if dx > EPSILON:
+        if dy < -EPSILON:
+            return Global.NORTHEAST
+        if dy > EPSILON:
+            return Global.SOUTHEAST
+        return Global.EAST
+    if dy < -EPSILON:
+        return Global.NORTH
+    if dy > EPSILON:
+        return Global.SOUTH
+    return Vector2.ZERO
