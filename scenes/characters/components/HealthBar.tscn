@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://assets/ui/health-bars.png" type="Texture" id=1]
+[ext_resource path="res://scenes/characters/components/HealthBar.gd" type="Script" id=2]
+
+[node name="HealthBar" type="Sprite"]
+z_index = 2
+texture = ExtResource( 1 )
+vframes = 15
+script = ExtResource( 2 )
