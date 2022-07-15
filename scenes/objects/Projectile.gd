@@ -13,7 +13,7 @@ enum FSM { TRAVEL, IMPACT, DECAY }
 
 export (int) var power: int = 1
 export (float) var speed: float = 120  # pixels / sec
-export (float) var decay: float = 0.5  # secs
+export (float) var decay: float = 0.125  # secs
 
 var target: Vector2 = Vector2()
 
@@ -68,11 +68,10 @@ func _physics_process(delta):
 
 
 func _process(delta):
-    match state:
-        FSM.IMPACT:
-            state = FSM.DECAY
-            do_effect()
-        FSM.DECAY:
-            decay -= delta
-            if decay <= 0:
-                queue_free()
+    if state == FSM.IMPACT:
+        state = FSM.DECAY
+        do_effect()
+    if state == FSM.DECAY:
+        decay -= delta
+        if decay <= 0:
+            queue_free()
