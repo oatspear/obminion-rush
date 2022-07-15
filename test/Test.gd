@@ -8,12 +8,12 @@ onready var human3: KinematicBody2D = $YSort/HumanArcher
 onready var orc: KinematicBody2D = $YSort/Orc
 
 func _ready():
-    #human1.set_patrol_path($Stage/Middle.get_path())
-    #human2.set_patrol_path($Stage/Middle.get_path())
-    human3.set_patrol_path($Stage/Middle.get_path())
+    #human1.set_patrol_path($Stage/Paths/Path2.get_path())
+    #human2.set_patrol_path($Stage/Paths/Path2.get_path())
+    human3.set_patrol_path($Stage/Paths/Path2.get_path())
     human3.connect("spawn_projectile", self, "_on_spawn_projectile")
 
-    orc.set_patrol_path($Stage/Middle.get_path())
+    orc.set_patrol_path($Stage/Paths/Path2.get_path())
 
 
 func _on_spawn_projectile(projectile, source, target):
