@@ -35,6 +35,7 @@ var state: int = FSM.IDLE
 
 var patrol_points
 var patrol_index: int = 0
+var patrol_orientation: int = 1  # how to increment patrol_index
 
 var health: int = max_health
 var attack_target = null
@@ -58,7 +59,12 @@ func set_patrol_path(path):
     patrol_path = path
     if path != null:
         patrol_points = get_node(path).curve.get_baked_points()
-        patrol_index = 0
+        if team == 0:
+            patrol_index = 0
+            patrol_orientation = 1
+        else:
+            patrol_index = patrol_points.size() - 1
+            patrol_orientation = -1
 
 
 func is_alive() -> bool:
@@ -221,9 +227,9 @@ func _physics_process_walk(delta):
     var target = patrol_points[patrol_index]
     velocity = _aim(target)
     if velocity == Vector2.ZERO:
-        patrol_index += 1
-        if patrol_index >= patrol_points.size():
-            patrol_index = 0
+        patrol_index += patrol_orientation
+        if patrol_index >= patrol_points.size() or patrol_index < 0:
+            patrol_index = 0 if team == 0 else patrol_points.size() - 1
             if not patrol_loop:
                 patrol_path = null
                 patrol_points = null
