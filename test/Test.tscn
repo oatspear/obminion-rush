@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://test/Test.gd" type="Script" id=1]
 [ext_resource path="res://scenes/characters/Human.tscn" type="PackedScene" id=2]
 [ext_resource path="res://scenes/characters/Orc.tscn" type="PackedScene" id=3]
 [ext_resource path="res://scenes/stages/Forest.tscn" type="PackedScene" id=4]
 [ext_resource path="res://scenes/characters/HumanArcher.tscn" type="PackedScene" id=5]
+[ext_resource path="res://scenes/ui/BattleGUI.tscn" type="PackedScene" id=6]
 
 [node name="Test" type="Node2D"]
 script = ExtResource( 1 )
@@ -27,3 +28,7 @@ position = Vector2( 104, 232 )
 [node name="Orc" parent="YSort" instance=ExtResource( 3 )]
 position = Vector2( 112, 120 )
 team = 1
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="BattleGUI" parent="UI" instance=ExtResource( 6 )]
