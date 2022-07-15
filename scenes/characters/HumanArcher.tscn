@@ -1,12 +1,17 @@
 [gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://data/animation/Human.tres" type="SpriteFrames" id=1]
+[ext_resource path="res://data/animation/HumanGreen.tres" type="SpriteFrames" id=1]
 [ext_resource path="res://scenes/characters/Minion.tscn" type="PackedScene" id=2]
 
 [sub_resource type="CircleShape2D" id=1]
-radius = 8.0
+radius = 30.0
 
-[node name="Human" instance=ExtResource( 2 )]
+[node name="HumanArcher" instance=ExtResource( 2 )]
+max_health = 15
+power = 4
+attack_speed = 1.8
+projectile = 1
+move_speed = 35.0
 
 [node name="Sprite" parent="." index="1"]
 frames = ExtResource( 1 )
