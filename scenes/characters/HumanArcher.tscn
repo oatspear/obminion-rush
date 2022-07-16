@@ -11,6 +11,7 @@ max_health = 15
 power = 4
 attack_speed = 1.8
 projectile = 1
+cost = 3
 move_speed = 35.0
 
 [node name="Sprite" parent="." index="1"]

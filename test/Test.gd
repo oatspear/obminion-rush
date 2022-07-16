@@ -27,9 +27,9 @@ func _ready():
     for i in range(len(buttons)):
         buttons[i].connect("button_clicked", self, "_on_button_clicked", [i])
 
-    buttons[0].set_unit(FRAMES_HUMAN_R, 1)
-    buttons[1].set_unit(FRAMES_HUMAN_G, 3)
-    buttons[2].set_unit(FRAMES_HUMAN_R, 2)
+    buttons[0].set_unit(human1.sprite.frames, human1.cost)
+    buttons[1].set_unit(human2.sprite.frames, human2.cost)
+    buttons[2].set_unit(human3.sprite.frames, human3.cost)
 
 
 func _on_spawn_projectile(projectile, source, target):

@@ -7,6 +7,7 @@
 radius = 8.0
 
 [node name="Human" instance=ExtResource( 2 )]
+cost = 2
 
 [node name="Sprite" parent="." index="1"]
 frames = ExtResource( 1 )

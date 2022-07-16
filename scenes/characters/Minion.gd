@@ -26,6 +26,7 @@ export (int) var power: int = 2
 export (float) var attack_speed: float = 1.0  # sec
 export (Global.Projectiles) var projectile: int = Global.Projectiles.NONE
 export (bool) var is_caster: bool = false
+export (int, 1, 5) var cost: int = Global.MIN_UNIT_COST
 
 export (float) var move_speed = 30.0  # pixels / sec
 export (NodePath) var patrol_path = null
