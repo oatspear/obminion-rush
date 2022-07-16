@@ -22,3 +22,7 @@ const ANIM_WALK = "walk"
 const ANIM_CAST = "cast"
 const ANIM_PUNCH = "punch"
 const ANIM_DEATH = "death"
+const ANIM_SNOOZE = "hit"
+
+const MIN_UNIT_COST = 1
+const MAX_UNIT_COST = 5
