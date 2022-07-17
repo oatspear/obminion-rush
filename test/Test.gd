@@ -43,6 +43,9 @@ onready var gold_label = $BattleGUI/Margin/V/StatusBar/Gold
 var next_player_unit
 onready var next_unit_icon = $BattleGUI/Margin/V/StatusBar/Next/Icon/Sprite
 
+onready var wingraphic: CanvasLayer = $WinGraphic
+onready var tween: Tween = $Tween
+
 
 func _ready():
     randomize()
@@ -88,7 +91,6 @@ func _spawn_minion(scn: PackedScene, team: int, spawn: Node2D, path: NodePath):
 
 
 func _on_button_clicked(i: int):
-    print("Button ", i, " clicked.")
     var scene = buttons[i].unit_type
     var team = 0
     var spawn = player_spawns[i]
@@ -115,3 +117,13 @@ func _on_EnemyTimer_timeout():
     var spawn = enemy_spawns[r % len(enemy_spawns)]
     var path = paths[r % len(paths)].get_path()
     _spawn_minion(scene, team, spawn, path)
+
+
+func _on_Win_body_entered(body):
+    if body.team == 0:
+        tween.interpolate_property(wingraphic, "offset",
+            wingraphic.offset, Vector2.ZERO, 1.0,
+            Tween.TRANS_SINE,
+            Tween.EASE_OUT)
+        tween.start()
+        $EnemyTimer.stop()
