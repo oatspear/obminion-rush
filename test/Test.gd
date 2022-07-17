@@ -22,9 +22,9 @@ var enemy_team = [
 ]
 
 onready var buttons = [
-    $BattleGUI/HUD/V/ActionBar/ActionButton1,
-    $BattleGUI/HUD/V/ActionBar/ActionButton2,
-    $BattleGUI/HUD/V/ActionBar/ActionButton3,
+    $BattleGUI/Margin/V/ActionBar/ActionButton1,
+    $BattleGUI/Margin/V/ActionBar/ActionButton2,
+    $BattleGUI/Margin/V/ActionBar/ActionButton3,
 ]
 
 onready var paths = [
@@ -38,7 +38,7 @@ onready var enemy_spawns = $Stage/SpawnEnemy.get_children()
 
 
 var player_coins = 12
-onready var gold_label = $BattleGUI/HUD/V/StatusBar/Gold
+onready var gold_label = $BattleGUI/Margin/V/StatusBar/Gold
 
 
 func _ready():
