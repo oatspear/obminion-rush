@@ -19,6 +19,10 @@ var player_team = [
     [FRAMES_HUMAN_R, 2, SCN_HUMAN1],
 ]
 
+var enemy_team = [
+    SCN_ORC1,
+]
+
 onready var buttons = [
     $BattleGUI/ActionButton1,
     $BattleGUI/ActionButton2,
@@ -36,6 +40,7 @@ onready var enemy_spawns = $Stage/SpawnEnemy.get_children()
 
 
 func _ready():
+    randomize()
     orc.set_patrol_path($Stage/Paths/Path2.get_path())
 
     for i in range(len(buttons)):
@@ -66,13 +71,29 @@ func _spawn_projectile(scene, source, target):
     ysort.add_child(obj)
 
 
+func _spawn_minion(scn: PackedScene, team: int, spawn: Node2D, path: NodePath):
+    var minion = scn.instance()
+    minion.position = spawn.position
+    minion.team = team
+    minion.patrol_path = path
+    minion.connect("spawn_projectile", self, "_on_spawn_projectile")
+    ysort.add_child(minion)
+
+
 func _on_button_clicked(i: int):
     print("Button ", i, " clicked.")
     # buttons[i].disable()
-    var minion = player_team[i][2].instance()
+    var scene = player_team[i][2]
+    var team = 0
     var spawn = player_spawns[i]
-    minion.position = spawn.position
-    minion.team = 0
-    minion.patrol_path = paths[i].get_path()
-    minion.connect("spawn_projectile", self, "_on_spawn_projectile")
-    ysort.add_child(minion)
+    var path = paths[i].get_path()
+    _spawn_minion(scene, team, spawn, path)
+
+
+func _on_EnemyTimer_timeout():
+    var r = randi()
+    var scene = enemy_team[r % len(enemy_team)]
+    var team = 1
+    var spawn = enemy_spawns[r % len(enemy_spawns)]
+    var path = paths[r % len(paths)].get_path()
+    _spawn_minion(scene, team, spawn, path)

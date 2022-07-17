@@ -17,3 +17,9 @@ position = Vector2( 112, 72 )
 team = 1
 
 [node name="BattleGUI" parent="." instance=ExtResource( 6 )]
+
+[node name="EnemyTimer" type="Timer" parent="."]
+wait_time = 2.0
+autostart = true
+
+[connection signal="timeout" from="EnemyTimer" to="." method="_on_EnemyTimer_timeout"]
