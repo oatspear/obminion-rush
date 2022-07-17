@@ -1,7 +1,6 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=3 format=2]
 
-[ext_resource path="res://data/animation/Human.tres" type="SpriteFrames" id=1]
-[ext_resource path="res://data/fonts/8BitWonder.tres" type="DynamicFont" id=2]
+[ext_resource path="res://scenes/ui/battle/StatusBar.tscn" type="PackedScene" id=1]
 [ext_resource path="res://scenes/ui/battle/ActionBar.tscn" type="PackedScene" id=3]
 
 [node name="BattleGUI" type="CanvasLayer"]
@@ -30,33 +29,7 @@ margin_top = 262.0
 margin_right = 172.0
 margin_bottom = 294.0
 
-[node name="Bottom" type="HBoxContainer" parent="HUD/V"]
+[node name="StatusBar" parent="HUD/V" instance=ExtResource( 1 )]
 margin_top = 298.0
 margin_right = 172.0
 margin_bottom = 316.0
-
-[node name="NextIcon" type="Control" parent="HUD/V/Bottom"]
-margin_right = 16.0
-margin_bottom = 18.0
-rect_min_size = Vector2( 16, 18 )
-mouse_filter = 1
-size_flags_horizontal = 4
-size_flags_vertical = 4
-
-[node name="Sprite" type="AnimatedSprite" parent="HUD/V/Bottom/NextIcon"]
-self_modulate = Color( 0.196078, 0.196078, 0.196078, 1 )
-frames = ExtResource( 1 )
-animation = "walk"
-frame = 2
-playing = true
-centered = false
-
-[node name="NextLabel" type="Label" parent="HUD/V/Bottom"]
-margin_left = 20.0
-margin_right = 52.0
-margin_bottom = 18.0
-mouse_filter = 1
-size_flags_vertical = 1
-custom_fonts/font = ExtResource( 2 )
-text = "next"
-valign = 2

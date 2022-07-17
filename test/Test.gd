@@ -37,12 +37,17 @@ onready var player_spawns = $Stage/SpawnPlayer.get_children()
 onready var enemy_spawns = $Stage/SpawnEnemy.get_children()
 
 
+var player_coins = 12
+onready var gold_label = $BattleGUI/HUD/V/StatusBar/Gold
+
+
 func _ready():
     randomize()
     for i in range(len(buttons)):
         buttons[i].connect("pressed", self, "_on_button_clicked", [i])
         var unit = player_team[i]
         buttons[i].set_unit(unit[0], unit[1])
+    gold_label.set_value(player_coins)
 
 
 
@@ -75,12 +80,17 @@ func _spawn_minion(scn: PackedScene, team: int, spawn: Node2D, path: NodePath):
 
 func _on_button_clicked(i: int):
     print("Button ", i, " clicked.")
-    # buttons[i].disable()
     var scene = player_team[i][2]
     var team = 0
     var spawn = player_spawns[i]
     var path = paths[i].get_path()
-    _spawn_minion(scene, team, spawn, path)
+    var cost = buttons[i].cost
+    if cost <= player_coins:
+        player_coins -= cost
+        gold_label.set_value(player_coins)
+        _spawn_minion(scene, team, spawn, path)
+    if cost > player_coins:
+        buttons[i].disable()
 
 
 func _on_EnemyTimer_timeout():

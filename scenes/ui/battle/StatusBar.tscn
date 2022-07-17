@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://scenes/ui/battle/Next.tscn" type="PackedScene" id=1]
+[ext_resource path="res://scenes/ui/Gold.tscn" type="PackedScene" id=2]
+
+[node name="StatusBar" type="HBoxContainer"]
+margin_right = 52.0
+margin_bottom = 18.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Gold" parent="." instance=ExtResource( 2 )]
+margin_bottom = 18.0
+size_flags_horizontal = 3
+
+[node name="Next" parent="." instance=ExtResource( 1 )]
+margin_left = 22.0
+margin_right = 74.0

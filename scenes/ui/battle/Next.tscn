@@ -1,0 +1,38 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://data/animation/Human.tres" type="SpriteFrames" id=1]
+[ext_resource path="res://data/fonts/8BitWonder.tres" type="DynamicFont" id=2]
+
+[node name="Next" type="HBoxContainer"]
+margin_right = 52.0
+margin_bottom = 18.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Icon" type="Control" parent="."]
+margin_right = 16.0
+margin_bottom = 18.0
+rect_min_size = Vector2( 16, 18 )
+mouse_filter = 1
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="Sprite" type="AnimatedSprite" parent="Icon"]
+self_modulate = Color( 0.196078, 0.196078, 0.196078, 1 )
+frames = ExtResource( 1 )
+animation = "walk"
+frame = 2
+playing = true
+centered = false
+
+[node name="Label" type="Label" parent="."]
+margin_left = 20.0
+margin_right = 52.0
+margin_bottom = 18.0
+mouse_filter = 1
+size_flags_horizontal = 4
+size_flags_vertical = 3
+custom_fonts/font = ExtResource( 2 )
+text = "next"
+valign = 2
