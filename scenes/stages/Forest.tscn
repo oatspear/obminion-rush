@@ -32,3 +32,18 @@ curve = SubResource( 2 )
 
 [node name="Path3" type="Path2D" parent="Paths" index="2"]
 curve = SubResource( 3 )
+
+[node name="Position1" type="Position2D" parent="SpawnPlayer" index="0"]
+position = Vector2( 25, 272 )
+
+[node name="Position2" type="Position2D" parent="SpawnPlayer" index="1"]
+position = Vector2( 90, 272 )
+
+[node name="Position3" type="Position2D" parent="SpawnPlayer" index="2"]
+position = Vector2( 155, 272 )
+
+[node name="Position1" type="Position2D" parent="SpawnEnemy" index="0"]
+position = Vector2( 65, 8 )
+
+[node name="Position2" type="Position2D" parent="SpawnEnemy" index="1"]
+position = Vector2( 120, 8 )

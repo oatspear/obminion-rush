@@ -8,3 +8,7 @@ cell_size = Vector2( 16, 16 )
 format = 1
 
 [node name="Paths" type="Node2D" parent="."]
+
+[node name="SpawnPlayer" type="Node" parent="."]
+
+[node name="SpawnEnemy" type="Node" parent="."]
