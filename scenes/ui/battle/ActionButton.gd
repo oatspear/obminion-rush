@@ -4,6 +4,7 @@ extends TextureButton
 # Variables
 ################################################################################
 
+export (Resource) var unit_type = null
 export (int) var cost: int = 0
 
 onready var unit_icon: AnimatedSprite = $Icon
