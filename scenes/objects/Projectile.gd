@@ -16,6 +16,7 @@ export (float) var speed: float = 120  # pixels / sec
 export (float) var decay: float = 0.125  # secs
 
 var target: Vector2 = Vector2()
+var travel_distance: float = 0.0
 
 onready var sprite: Sprite = $Sprite
 onready var state = FSM.TRAVEL
@@ -40,6 +41,7 @@ func _ready():
     # requires: set target
     # requires: set power
     # requires: set collision layer and mask
+    travel_distance = position.distance_to(target)
     var dx = target.x - position.x
     var dy = target.y - position.y
     if abs(dx) >= abs(dy):
@@ -56,15 +58,18 @@ func _ready():
 func _physics_process(delta):
     if state != FSM.TRAVEL:
         return
-    var vel = target - position
+    var vel: Vector2 = target - position
     vel = vel.normalized() * speed * delta
-    if abs(vel.x) < 1 and abs(vel.y) < 1:
-        state = FSM.IMPACT
-        collision_target = null
     var col = move_and_collide(vel)
-    if col != null:
+    if col == null:
+        travel_distance -= vel.length()
+    else:
         state = FSM.IMPACT
         collision_target = col.collider
+        travel_distance -= col.travel.length()
+    if travel_distance <= 0 and state == FSM.TRAVEL:
+        state = FSM.IMPACT
+        collision_target = null
 
 
 func _process(delta):

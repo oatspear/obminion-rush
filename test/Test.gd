@@ -9,8 +9,6 @@ const SCN_HUMAN1 = preload("res://scenes/characters/Human.tscn")
 const SCN_HUMAN2 = preload("res://scenes/characters/HumanArcher.tscn")
 const SCN_ORC1 = preload("res://scenes/characters/Orc.tscn")
 
-onready var orc: KinematicBody2D = $YSort/Orc
-
 onready var ysort = $YSort
 
 var player_team = [
@@ -41,8 +39,6 @@ onready var enemy_spawns = $Stage/SpawnEnemy.get_children()
 
 func _ready():
     randomize()
-    orc.set_patrol_path($Stage/Paths/Path2.get_path())
-
     for i in range(len(buttons)):
         buttons[i].connect("button_clicked", self, "_on_button_clicked", [i])
         var unit = player_team[i]

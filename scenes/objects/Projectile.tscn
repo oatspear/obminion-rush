@@ -10,6 +10,7 @@ extents = Vector2( 1, 1 )
 collision_layer = 0
 collision_mask = 0
 script = ExtResource( 2 )
+speed = 150.0
 
 [node name="Shape" type="CollisionShape2D" parent="."]
 shape = SubResource( 1 )
