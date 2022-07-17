@@ -1,16 +1,9 @@
-extends Sprite
-
-################################################################################
-# Signals
-################################################################################
-
-signal button_clicked()
+extends TextureButton
 
 ################################################################################
 # Variables
 ################################################################################
 
-export (bool) var disabled: bool = false
 export (int) var cost: int = 0
 
 onready var unit_icon: AnimatedSprite = $Icon
@@ -72,14 +65,3 @@ func _refresh_cost():
     else:
         cost_icon.visible = true
         cost_icon.frame = 2 * (cost - 1) + (1 if disabled else 0)
-
-
-################################################################################
-# Event Handlers
-################################################################################
-
-func _on_Area_input_event(_viewport, event, _shape_idx):
-    if (event is InputEventMouseButton and event.pressed):
-        if (event.button_index == BUTTON_LEFT):
-            if not disabled:
-                emit_signal("button_clicked")

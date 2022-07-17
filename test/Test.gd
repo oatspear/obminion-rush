@@ -22,9 +22,9 @@ var enemy_team = [
 ]
 
 onready var buttons = [
-    $BattleGUI/ActionButton1,
-    $BattleGUI/ActionButton2,
-    $BattleGUI/ActionButton3,
+    $BattleGUI/HUD/V/ActionBar/ActionButton1,
+    $BattleGUI/HUD/V/ActionBar/ActionButton2,
+    $BattleGUI/HUD/V/ActionBar/ActionButton3,
 ]
 
 onready var paths = [
@@ -40,13 +40,10 @@ onready var enemy_spawns = $Stage/SpawnEnemy.get_children()
 func _ready():
     randomize()
     for i in range(len(buttons)):
-        buttons[i].connect("button_clicked", self, "_on_button_clicked", [i])
+        buttons[i].connect("pressed", self, "_on_button_clicked", [i])
         var unit = player_team[i]
         buttons[i].set_unit(unit[0], unit[1])
 
-
-func _process(delta):
-    pass
 
 
 func _on_spawn_projectile(projectile, source, target):
