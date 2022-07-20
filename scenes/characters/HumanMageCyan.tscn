@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://scenes/characters/Minion.tscn" type="PackedScene" id=1]
+[ext_resource path="res://data/animation/HumanMageCyan.tres" type="SpriteFrames" id=2]
+
+[sub_resource type="CircleShape2D" id=1]
+radius = 30.0
+
+[node name="Minion" instance=ExtResource( 1 )]
+power = 4
+projectile = 1
+move_speed = 25.0
+
+[node name="Sprite" parent="." index="1"]
+frames = ExtResource( 2 )
+
+[node name="Area" parent="Range" index="0"]
+shape = SubResource( 1 )
