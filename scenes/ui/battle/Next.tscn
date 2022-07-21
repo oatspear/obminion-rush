@@ -11,26 +11,27 @@ __meta__ = {
 }
 
 [node name="Icon" type="Control" parent="."]
-margin_top = 8.0
-margin_right = 32.0
-margin_bottom = 24.0
-rect_min_size = Vector2( 32, 16 )
+margin_top = 1.0
+margin_right = 24.0
+margin_bottom = 17.0
+rect_min_size = Vector2( 24, 16 )
 mouse_filter = 1
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
 [node name="Sprite" type="AnimatedSprite" parent="Icon"]
-self_modulate = Color( 0.196078, 0.196078, 0.196078, 1 )
+self_modulate = Color( 0.501961, 0.501961, 0.501961, 1 )
+position = Vector2( -4, -6 )
 frames = ExtResource( 1 )
 animation = "walk"
-frame = 3
+frame = 1
 playing = true
 centered = false
 
 [node name="Label" type="Label" parent="."]
-margin_left = 36.0
-margin_right = 68.0
-margin_bottom = 32.0
+margin_left = 28.0
+margin_right = 60.0
+margin_bottom = 18.0
 mouse_filter = 1
 size_flags_horizontal = 4
 size_flags_vertical = 3
