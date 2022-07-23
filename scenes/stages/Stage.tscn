@@ -2,7 +2,18 @@
 
 [node name="Stage" type="Node2D"]
 
-[node name="TileMap" type="TileMap" parent="."]
+[node name="Background" type="TileMap" parent="."]
+position = Vector2( 2, 0 )
+cell_size = Vector2( 16, 16 )
+format = 1
+
+[node name="Objects" type="TileMap" parent="."]
+position = Vector2( 2, 0 )
+cell_size = Vector2( 16, 16 )
+cell_y_sort = true
+format = 1
+
+[node name="Overlay" type="TileMap" parent="."]
 position = Vector2( 2, 0 )
 cell_size = Vector2( 16, 16 )
 format = 1
