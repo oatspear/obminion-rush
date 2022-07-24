@@ -40,8 +40,6 @@ func _ready():
     # requires: set initial position
     # requires: set target
     # requires: set power
-    # requires: set collision layer and mask
-    collision_layer = 0
     travel_distance = position.distance_to(target)
     var dx = target.x - position.x
     var dy = target.y - position.y

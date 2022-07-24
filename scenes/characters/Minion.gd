@@ -29,14 +29,9 @@ export (bool) var is_caster: bool = false
 export (int, 1, 5) var cost: int = Global.MIN_UNIT_COST
 
 export (float) var move_speed = 30.0  # pixels / sec
-export (NodePath) var patrol_path = null
-export (bool) var patrol_loop = false
+var waypoint = null
 
 var state: int = FSM.IDLE
-
-var patrol_points
-var patrol_index: int = 0
-var patrol_orientation: int = 1  # how to increment patrol_index
 
 var health: int = max_health
 var attack_target = null
@@ -56,16 +51,8 @@ onready var health_bar = $HealthBar
 func get_hitbox_position() -> Vector2:
     return position + $Shape.position
 
-func set_patrol_path(path):
-    patrol_path = path
-    if path != null:
-        patrol_points = get_node(path).curve.get_baked_points()
-        if team == 0:
-            patrol_index = 0
-            patrol_orientation = 1
-        else:
-            patrol_index = patrol_points.size() - 1
-            patrol_orientation = -1
+func set_waypoint(point: Vector2):
+    waypoint = point
 
 
 func is_alive() -> bool:
@@ -125,14 +112,9 @@ func _on_Sprite_animation_finished():
 ################################################################################
 
 func _ready():
-    collision_layer = 1 << team
-    collision_mask = ~collision_layer
-    range_area.collision_layer = 0
-    range_area.collision_mask = collision_mask
     health = max_health
     health_bar.set_value(health, max_health)
     sprite.animation = Global.ANIM_IDLE
-    set_patrol_path(patrol_path)
 
 
 func _process(delta: float):
@@ -184,8 +166,7 @@ func _enter_dying():
     health = 0
     power = 0
     move_speed = 0
-    patrol_path = null
-    patrol_points = null
+    waypoint = null
     attack_target = null
     velocity = Vector2.ZERO
     sprite.animation = Global.ANIM_DEATH
@@ -205,7 +186,7 @@ func _process_idle(delta):
     if target != null:
         _enter_attack(target)
         return _process_attack(delta)
-    if patrol_path != null:
+    if waypoint != null:
         _enter_walk()
 
 
@@ -225,24 +206,16 @@ func _process_attack(delta: float):
 
 
 func _physics_process_walk(delta):
-    if !patrol_path:
+    if waypoint == null:
         return
-    var target = patrol_points[patrol_index]
-    velocity = _aim(target)
+    velocity = _aim(waypoint)
     if velocity == Vector2.ZERO:
-        patrol_index += patrol_orientation
-        if patrol_index >= patrol_points.size() or patrol_index < 0:
-            patrol_index = 0 if team == 0 else patrol_points.size() - 1
-            if not patrol_loop:
-                patrol_path = null
-                patrol_points = null
-                _enter_idle()
-                return
-        target = patrol_points[patrol_index]
-        velocity = _aim(target)
+        waypoint = null
+        _enter_idle()
+        return
     sprite.flip_h = velocity.x < 0
-    velocity *= move_speed * delta
-    var _collision = move_and_collide(velocity)
+    velocity *= move_speed
+    move_and_slide(velocity)
 
 
 func _aim(target: Vector2) -> Vector2:

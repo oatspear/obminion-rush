@@ -14,7 +14,7 @@ const SCN_ENEMY1 = preload("res://scenes/characters/HumanWarriorRed.tscn")
 const SCN_ENEMY2 = preload("res://scenes/characters/HumanArcherPurple.tscn")
 const SCN_ENEMY3 = preload("res://scenes/characters/HumanMageRed.tscn")
 
-onready var ysort = $YSort
+onready var stage = $Stage
 
 var player_team = [
     [FRAMES_PLAYER_SOLDIER, 2, SCN_HUMAN1],
@@ -33,15 +33,6 @@ onready var buttons = [
     $BattleGUI/Margin/V/ActionBar/ActionButton2,
     $BattleGUI/Margin/V/ActionBar/ActionButton3,
 ]
-
-onready var paths = [
-    $Stage/Paths/Path1,
-    $Stage/Paths/Path2,
-    $Stage/Paths/Path3,
-]
-
-onready var player_spawns = $Stage/SpawnPlayer.get_children()
-onready var enemy_spawns = $Stage/SpawnEnemy.get_children()
 
 
 var player_coins = 12
@@ -83,30 +74,25 @@ func _spawn_projectile(scene, source, target):
     obj.position = source.position
     obj.target = target.get_hitbox_position()
     obj.power = source.power
-    obj.collision_layer = 0
-    obj.collision_mask = ~(1 << source.team)
-    ysort.add_child(obj)
+    stage.spawn_object(obj)
 
 
-func _spawn_minion(scn: PackedScene, team: int, spawn: Node2D, path: NodePath):
+func _spawn_minion(scn: PackedScene, team: int, spawn: int):
     var minion = scn.instance()
-    minion.position = spawn.position
     minion.team = team
-    minion.patrol_path = path
     minion.connect("spawn_projectile", self, "_on_spawn_projectile")
-    ysort.add_child(minion)
+    stage.spawn_minion(minion, team, spawn)
 
 
 func _on_button_clicked(i: int):
     var scene = buttons[i].unit_type
     var team = 0
-    var spawn = player_spawns[i]
-    var path = paths[i].get_path()
+    var spawn = 0
     var cost = buttons[i].cost
     if cost <= player_coins:
         player_coins -= cost
         gold_label.set_value(player_coins)
-        _spawn_minion(scene, team, spawn, path)
+        _spawn_minion(scene, team, spawn)
         # regenerate next unit
         buttons[i].set_unit(next_player_unit[0], next_player_unit[1])
         buttons[i].unit_type = next_player_unit[2]
@@ -121,9 +107,8 @@ func _on_EnemyTimer_timeout():
     var r = randi()
     var scene = enemy_team[r % len(enemy_team)]
     var team = 1
-    var spawn = enemy_spawns[r % len(enemy_spawns)]
-    var path = paths[r % len(paths)].get_path()
-    _spawn_minion(scene, team, spawn, path)
+    var spawn = r % stage.num_spawn_points(1)
+    _spawn_minion(scene, team, spawn)
 
     player_coins += 2
     gold_label.set_value(player_coins)
