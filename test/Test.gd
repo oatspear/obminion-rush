@@ -1,6 +1,6 @@
 extends Node2D
 
-const SCN_PROJECTILE = preload("res://scenes/objects/Projectile.tscn")
+const SCN_ARROW = preload("res://scenes/objects/Arrow.tscn")
 
 const FRAMES_PLAYER_SOLDIER = preload("res://data/animation/HumanSoldierBlue.tres")
 const FRAMES_PLAYER_ARCHER = preload("res://data/animation/HumanArcherGreen.tres")
@@ -64,7 +64,7 @@ func _random_unit(team: Array):
 func _on_spawn_projectile(projectile, source, target):
     match projectile:
         Global.Projectiles.ARROW:
-            _spawn_projectile(SCN_PROJECTILE, source, target)
+            _spawn_projectile(SCN_ARROW, source, target)
         _:
             pass
 
@@ -72,7 +72,7 @@ func _on_spawn_projectile(projectile, source, target):
 func _spawn_projectile(scene, source, target):
     var obj = scene.instance()
     obj.position = source.position
-    obj.target = target.get_hitbox_position()
+    obj.target = target
     obj.power = source.power
     stage.spawn_object(obj)
 

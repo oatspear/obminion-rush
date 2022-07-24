@@ -9,26 +9,26 @@
 [ext_resource path="res://scenes/objects/RedFlag.tscn" type="PackedScene" id=7]
 [ext_resource path="res://scenes/objects/BlueFlag.tscn" type="PackedScene" id=8]
 
-[sub_resource type="RectangleShape2D" id=5]
+[sub_resource type="RectangleShape2D" id=1]
 resource_local_to_scene = true
 extents = Vector2( 90, 16 )
 
-[sub_resource type="RectangleShape2D" id=6]
+[sub_resource type="RectangleShape2D" id=2]
 resource_local_to_scene = true
 extents = Vector2( 90, 16 )
 
-[sub_resource type="RectangleShape2D" id=7]
+[sub_resource type="RectangleShape2D" id=3]
 resource_local_to_scene = true
 extents = Vector2( 8, 120 )
 
-[sub_resource type="RectangleShape2D" id=8]
+[sub_resource type="RectangleShape2D" id=4]
 resource_local_to_scene = true
 
-[sub_resource type="RectangleShape2D" id=9]
+[sub_resource type="RectangleShape2D" id=5]
 resource_local_to_scene = true
 extents = Vector2( 24, 8 )
 
-[sub_resource type="RectangleShape2D" id=10]
+[sub_resource type="RectangleShape2D" id=6]
 resource_local_to_scene = true
 extents = Vector2( 8, 60 )
 
@@ -68,55 +68,55 @@ waypoint = NodePath("../../Waypoints/R5")
 position = Vector2( 90, 16 )
 
 [node name="CollisionShape2D" parent="Obstacles/Obstacle" index="0"]
-shape = SubResource( 5 )
+shape = SubResource( 1 )
 
 [node name="Obstacle2" parent="Obstacles" index="1" instance=ExtResource( 5 )]
 position = Vector2( 90, 304 )
 
 [node name="CollisionShape2D" parent="Obstacles/Obstacle2" index="0"]
-shape = SubResource( 6 )
+shape = SubResource( 2 )
 
 [node name="Obstacle3" parent="Obstacles" index="2" instance=ExtResource( 5 )]
 position = Vector2( 0, 160 )
 
 [node name="CollisionShape2D" parent="Obstacles/Obstacle3" index="0"]
-shape = SubResource( 7 )
+shape = SubResource( 3 )
 
 [node name="Obstacle4" parent="Obstacles" index="3" instance=ExtResource( 5 )]
 position = Vector2( 180, 160 )
 
 [node name="CollisionShape2D" parent="Obstacles/Obstacle4" index="0"]
-shape = SubResource( 7 )
+shape = SubResource( 3 )
 
 [node name="Obstacle5" parent="Obstacles" index="4" instance=ExtResource( 5 )]
 position = Vector2( 24, 200 )
 
 [node name="CollisionShape2D" parent="Obstacles/Obstacle5" index="0"]
-shape = SubResource( 8 )
+shape = SubResource( 4 )
 
 [node name="Obstacle6" parent="Obstacles" index="5" instance=ExtResource( 5 )]
 position = Vector2( 156, 136 )
 
 [node name="CollisionShape2D" parent="Obstacles/Obstacle6" index="0"]
-shape = SubResource( 8 )
+shape = SubResource( 4 )
 
 [node name="Obstacle7" parent="Obstacles" index="6" instance=ExtResource( 5 )]
 position = Vector2( 90, 88 )
 
 [node name="CollisionShape2D" parent="Obstacles/Obstacle7" index="0"]
-shape = SubResource( 9 )
+shape = SubResource( 5 )
 
 [node name="Obstacle8" parent="Obstacles" index="7" instance=ExtResource( 5 )]
 position = Vector2( 90, 232 )
 
 [node name="CollisionShape2D" parent="Obstacles/Obstacle8" index="0"]
-shape = SubResource( 9 )
+shape = SubResource( 5 )
 
 [node name="Obstacle9" parent="Obstacles" index="8" instance=ExtResource( 5 )]
 position = Vector2( 90, 160 )
 
 [node name="CollisionShape2D" parent="Obstacles/Obstacle9" index="0"]
-shape = SubResource( 10 )
+shape = SubResource( 6 )
 
 [node name="L1" parent="Waypoints" index="0" instance=ExtResource( 6 )]
 position = Vector2( 32, 240 )
@@ -170,7 +170,6 @@ previous_waypoint = NodePath("../R4")
 
 [node name="RedFlag" parent="Objectives" index="0" instance=ExtResource( 7 )]
 position = Vector2( 90, 56 )
-team = 1
 
 [node name="BlueFlag" parent="Objectives" index="1" instance=ExtResource( 8 )]
 position = Vector2( 90, 264 )

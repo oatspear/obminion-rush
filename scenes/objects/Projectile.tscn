@@ -1,19 +1,6 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=2 format=2]
 
-[ext_resource path="res://assets/objects/arrow.png" type="Texture" id=1]
-[ext_resource path="res://scenes/objects/Projectile.gd" type="Script" id=2]
+[ext_resource path="res://scenes/objects/Projectile.gd" type="Script" id=1]
 
-[sub_resource type="RectangleShape2D" id=1]
-extents = Vector2( 1, 1 )
-
-[node name="Projectile" type="KinematicBody2D"]
-collision_layer = 1024
-script = ExtResource( 2 )
-speed = 150.0
-
-[node name="Shape" type="CollisionShape2D" parent="."]
-shape = SubResource( 1 )
-
-[node name="Sprite" type="Sprite" parent="."]
-texture = ExtResource( 1 )
-vframes = 2
+[node name="Projectile" type="Sprite"]
+script = ExtResource( 1 )

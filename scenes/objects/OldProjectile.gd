@@ -1,4 +1,4 @@
-extends Sprite
+extends KinematicBody2D
 
 ################################################################################
 # Constants
@@ -15,10 +15,12 @@ export (int) var power: int = 1
 export (float) var speed: float = 120  # pixels / sec
 export (float) var decay: float = 0.125  # secs
 
-var target: Node2D
+var target: Vector2 = Vector2()
 var travel_distance: float = 0.0
 
+onready var sprite: Sprite = $Sprite
 onready var state = FSM.TRAVEL
+onready var collision_target = null
 
 
 ################################################################################
@@ -26,8 +28,8 @@ onready var state = FSM.TRAVEL
 ################################################################################
 
 func do_effect():
-    if target != null:
-        target.take_physical_damage(power)
+    if collision_target != null:
+        collision_target.take_physical_damage(power)
 
 
 ################################################################################
@@ -38,33 +40,35 @@ func _ready():
     # requires: set initial position
     # requires: set target
     # requires: set power
-    travel_distance = position.distance_to(target.position)
-    var dx = target.position.x - position.x
-    var dy = target.position.y - position.y
+    travel_distance = position.distance_to(target)
+    var dx = target.x - position.x
+    var dy = target.y - position.y
     if abs(dx) >= abs(dy):
         # more horizontal than vertical
-        frame = 1
-        flip_h = dx < 0
-        flip_v = dy > 0
+        sprite.frame = 1
+        sprite.flip_h = dx < 0
+        sprite.flip_v = dy > 0
     else:
         # more vertical than horizontal
-        flip_h = dx > 0
-        flip_v = dy > 0
+        sprite.flip_h = dx > 0
+        sprite.flip_v = dy > 0
 
 
 func _physics_process(delta):
     if state != FSM.TRAVEL:
         return
-    if position.distance_to(target.position) < 1:
-        state = FSM.IMPACT
-    else:
-        var vel: Vector2 = target.position - position
-        vel = vel.normalized() * speed * delta
-        position += vel
+    var vel: Vector2 = target - position
+    vel = vel.normalized() * speed * delta
+    var col = move_and_collide(vel)
+    if col == null:
         travel_distance -= vel.length()
-        if travel_distance <= 0 and state == FSM.TRAVEL:
-            state = FSM.IMPACT
-            target = null
+    else:
+        state = FSM.IMPACT
+        collision_target = col.collider
+        travel_distance -= col.travel.length()
+    if travel_distance <= 0 and state == FSM.TRAVEL:
+        state = FSM.IMPACT
+        collision_target = null
 
 
 func _process(delta):
