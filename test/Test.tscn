@@ -1,12 +1,9 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://test/Test.gd" type="Script" id=1]
 [ext_resource path="res://data/fonts/8BitWonder_Large.tres" type="DynamicFont" id=2]
 [ext_resource path="res://scenes/stages/CustomStage.tscn" type="PackedScene" id=3]
 [ext_resource path="res://scenes/ui/battle/BattleGUI.tscn" type="PackedScene" id=6]
-
-[sub_resource type="RectangleShape2D" id=1]
-extents = Vector2( 20, 10 )
 
 [node name="Test" type="Node2D"]
 script = ExtResource( 1 )
@@ -16,14 +13,8 @@ script = ExtResource( 1 )
 [node name="BattleGUI" parent="." instance=ExtResource( 6 )]
 
 [node name="EnemyTimer" type="Timer" parent="."]
-wait_time = 5.0
+wait_time = 2.0
 autostart = true
-
-[node name="Win" type="Area2D" parent="."]
-
-[node name="Shape" type="CollisionShape2D" parent="Win"]
-position = Vector2( 90, 40 )
-shape = SubResource( 1 )
 
 [node name="WinGraphic" type="CanvasLayer" parent="."]
 layer = 5
@@ -47,5 +38,5 @@ text = "Victory"
 
 [node name="Tween" type="Tween" parent="."]
 
+[connection signal="objective_captured" from="Stage" to="." method="_on_Stage_objective_captured"]
 [connection signal="timeout" from="EnemyTimer" to="." method="_on_EnemyTimer_timeout"]
-[connection signal="body_entered" from="Win" to="." method="_on_Win_body_entered"]

@@ -1,6 +1,12 @@
 extends Node2D
 
 ################################################################################
+# Signals
+################################################################################
+
+signal objective_captured(team)
+
+################################################################################
 # Variables
 ################################################################################
 
@@ -35,3 +41,13 @@ func _ready():
     spawn_points = [[], []]
     for p in $SpawnPoints.get_children():
         spawn_points[p.team].append(p)
+    for node in $Objectives.get_children():
+        node.connect("destroyed", self, "_on_objective_destroyed", [node.team])
+
+
+################################################################################
+# Events
+################################################################################
+
+func _on_objective_destroyed(team: int):
+    emit_signal("objective_captured", team)

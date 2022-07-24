@@ -15,7 +15,7 @@ export (int) var power: int = 1
 export (float) var speed: float = 120  # pixels / sec
 export (float) var decay: float = 0.125  # secs
 
-var target: Node2D
+var target: WeakRef
 var travel_distance: float = 0.0
 
 onready var state = FSM.TRAVEL
@@ -26,8 +26,11 @@ onready var state = FSM.TRAVEL
 ################################################################################
 
 func do_effect():
-    if target != null:
-        target.take_physical_damage(power)
+    if target == null:
+        return
+    var t = target.get_ref()
+    if t:
+        t.take_physical_damage(power)
 
 
 ################################################################################
@@ -38,9 +41,14 @@ func _ready():
     # requires: set initial position
     # requires: set target
     # requires: set power
-    travel_distance = position.distance_to(target.position)
-    var dx = target.position.x - position.x
-    var dy = target.position.y - position.y
+    var t = target.get_ref()
+    if not t:
+        queue_free()
+        return
+    var p: Vector2 = t.get_hitbox_position()
+    travel_distance = position.distance_to(p) + 16
+    var dx = p.x - position.x
+    var dy = p.y - position.y
     if abs(dx) >= abs(dy):
         # more horizontal than vertical
         frame = 1
@@ -55,10 +63,15 @@ func _ready():
 func _physics_process(delta):
     if state != FSM.TRAVEL:
         return
-    if position.distance_to(target.position) < 1:
+    var t = target.get_ref()
+    if not t:
+        state = FSM.IMPACT
+        return
+    var p = t.get_hitbox_position()
+    if position.distance_to(p) < 1:
         state = FSM.IMPACT
     else:
-        var vel: Vector2 = target.position - position
+        var vel: Vector2 = p - position
         vel = vel.normalized() * speed * delta
         position += vel
         travel_distance -= vel.length()

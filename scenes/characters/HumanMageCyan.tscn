@@ -9,7 +9,7 @@ radius = 30.0
 [node name="Minion" instance=ExtResource( 1 )]
 power = 4
 projectile = 1
-move_speed = 25.0
+move_speed = 12.0
 
 [node name="Sprite" parent="." index="1"]
 frames = ExtResource( 2 )

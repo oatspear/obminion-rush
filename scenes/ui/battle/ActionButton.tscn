@@ -9,7 +9,7 @@
 [node name="ActionButton" type="TextureButton"]
 margin_right = 48.0
 margin_bottom = 32.0
-size_flags_horizontal = 3
+size_flags_horizontal = 4
 size_flags_vertical = 4
 action_mode = 0
 texture_normal = ExtResource( 3 )

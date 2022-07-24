@@ -9,6 +9,7 @@
 max_health = 30
 power = 3
 attack_speed = 0.8
+move_speed = 18.0
 
 [node name="Sprite" parent="." index="1"]
 frames = ExtResource( 2 )

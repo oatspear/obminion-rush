@@ -11,25 +11,31 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 1
 custom_constants/margin_right = 4
-custom_constants/margin_top = 0
+custom_constants/margin_top = 2
 custom_constants/margin_left = 4
-custom_constants/margin_bottom = 4
+custom_constants/margin_bottom = 2
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="V" type="VBoxContainer" parent="Margin"]
 margin_left = 4.0
+margin_top = 2.0
 margin_right = 176.0
-margin_bottom = 316.0
+margin_bottom = 318.0
 alignment = 2
 
-[node name="ActionBar" parent="Margin/V" instance=ExtResource( 3 )]
-margin_top = 262.0
-margin_right = 172.0
-margin_bottom = 294.0
-
 [node name="StatusBar" parent="Margin/V" instance=ExtResource( 1 )]
-margin_top = 298.0
+margin_right = 172.0
+margin_bottom = 16.0
+
+[node name="Spacing" type="Control" parent="Margin/V"]
+margin_top = 20.0
+margin_right = 172.0
+margin_bottom = 280.0
+size_flags_vertical = 3
+
+[node name="ActionBar" parent="Margin/V" instance=ExtResource( 3 )]
+margin_top = 284.0
 margin_right = 172.0
 margin_bottom = 316.0

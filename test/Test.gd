@@ -42,6 +42,7 @@ var next_player_unit
 onready var next_unit_icon = $BattleGUI/Margin/V/StatusBar/Next/Icon/Sprite
 
 onready var wingraphic: CanvasLayer = $WinGraphic
+onready var winlabel: Label = $WinGraphic/CenterContainer/Label
 onready var tween: Tween = $Tween
 
 
@@ -72,7 +73,7 @@ func _on_spawn_projectile(projectile, source, target):
 func _spawn_projectile(scene, source, target):
     var obj = scene.instance()
     obj.position = source.position
-    obj.target = target
+    obj.target = weakref(target)
     obj.power = source.power
     stage.spawn_object(obj)
 
@@ -110,18 +111,21 @@ func _on_EnemyTimer_timeout():
     var spawn = r % stage.num_spawn_points(1)
     _spawn_minion(scene, team, spawn)
 
-    player_coins += 2
+    player_coins += 1
     gold_label.set_value(player_coins)
     for button in buttons:
         if button.cost <= player_coins:
             button.enable()
 
 
-func _on_Win_body_entered(body):
-    if body.team == 0:
-        tween.interpolate_property(wingraphic, "offset",
-            wingraphic.offset, Vector2.ZERO, 1.0,
-            Tween.TRANS_SINE,
-            Tween.EASE_OUT)
-        tween.start()
-        $EnemyTimer.stop()
+func _on_Stage_objective_captured(team: int):
+    if team == 1:  # player (0) captured enemy (1)
+        winlabel.text = "Victory"
+    else:
+        winlabel.text = "Defeat"
+    tween.interpolate_property(wingraphic, "offset",
+        wingraphic.offset, Vector2.ZERO, 1.0,
+        Tween.TRANS_SINE,
+        Tween.EASE_OUT)
+    tween.start()
+    $EnemyTimer.stop()
