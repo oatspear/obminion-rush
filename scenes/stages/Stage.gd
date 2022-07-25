@@ -10,6 +10,7 @@ signal objective_captured(team)
 # Variables
 ################################################################################
 
+onready var hero_spawns = {}
 onready var spawn_points = {}
 
 onready var object_layer = $Objects
@@ -29,6 +30,14 @@ func spawn_minion(minion, i: int):
     minion.set_waypoint(waypoint)
     object_layer.add_child(minion)
 
+
+func spawn_hero(minion):
+    var objective = hero_spawns[minion.team]
+    minion.position = objective.position
+    objective.set_hero(minion)
+    object_layer.add_child(minion)
+
+
 func spawn_object(obj):
     object_layer.add_child(obj)
 
@@ -45,12 +54,13 @@ func _ready():
             spawn_points[p.team] = points
         points.append(p)
     for node in $Objectives.get_children():
-        node.connect("destroyed", self, "_on_objective_destroyed", [node.team])
+        hero_spawns[node.team] = node
+        node.connect("captured", self, "_on_objective_captured", [node.team])
 
 
 ################################################################################
 # Events
 ################################################################################
 
-func _on_objective_destroyed(team: int):
+func _on_objective_captured(team: int):
     emit_signal("objective_captured", team)

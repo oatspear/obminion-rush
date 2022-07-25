@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=2]
+[gd_scene load_steps=16 format=2]
 
 [ext_resource path="res://scenes/stages/Stage.tscn" type="PackedScene" id=1]
 [ext_resource path="res://data/tilesets/Background.tres" type="TileSet" id=2]
@@ -6,8 +6,7 @@
 [ext_resource path="res://scenes/stages/helpers/SpawnPoint.tscn" type="PackedScene" id=4]
 [ext_resource path="res://scenes/stages/helpers/Obstacle.tscn" type="PackedScene" id=5]
 [ext_resource path="res://scenes/stages/helpers/Waypoint.tscn" type="PackedScene" id=6]
-[ext_resource path="res://scenes/objects/RedFlag.tscn" type="PackedScene" id=7]
-[ext_resource path="res://scenes/objects/BlueFlag.tscn" type="PackedScene" id=8]
+[ext_resource path="res://scenes/stages/helpers/HeroObjective.tscn" type="PackedScene" id=7]
 
 [sub_resource type="RectangleShape2D" id=1]
 resource_local_to_scene = true
@@ -31,6 +30,12 @@ extents = Vector2( 24, 8 )
 [sub_resource type="RectangleShape2D" id=6]
 resource_local_to_scene = true
 extents = Vector2( 8, 60 )
+
+[sub_resource type="CircleShape2D" id=7]
+radius = 50.0
+
+[sub_resource type="CircleShape2D" id=8]
+radius = 50.0
 
 [node name="Stage" instance=ExtResource( 1 )]
 
@@ -123,7 +128,7 @@ shape = SubResource( 6 )
 [node name="L1" parent="Waypoints" index="0" instance=ExtResource( 6 )]
 position = Vector2( 32, 248 )
 next_waypoint = NodePath("../L2")
-previous_waypoint = NodePath("../../Objectives/BlueFlag")
+previous_waypoint = NodePath("../../Objectives/Blue")
 
 [node name="L2" parent="Waypoints" index="1" instance=ExtResource( 6 )]
 position = Vector2( 56, 200 )
@@ -142,13 +147,13 @@ previous_waypoint = NodePath("../L3")
 
 [node name="L5" parent="Waypoints" index="4" instance=ExtResource( 6 )]
 position = Vector2( 32, 72 )
-next_waypoint = NodePath("../../Objectives/RedFlag")
+next_waypoint = NodePath("../../Objectives/Red")
 previous_waypoint = NodePath("../L4")
 
 [node name="R1" parent="Waypoints" index="5" instance=ExtResource( 6 )]
 position = Vector2( 144, 248 )
 next_waypoint = NodePath("../R2")
-previous_waypoint = NodePath("../../Objectives/BlueFlag")
+previous_waypoint = NodePath("../../Objectives/Blue")
 
 [node name="R2" parent="Waypoints" index="6" instance=ExtResource( 6 )]
 position = Vector2( 152, 184 )
@@ -167,14 +172,22 @@ previous_waypoint = NodePath("../R3")
 
 [node name="R5" parent="Waypoints" index="9" instance=ExtResource( 6 )]
 position = Vector2( 144, 72 )
-next_waypoint = NodePath("../../Objectives/RedFlag")
+next_waypoint = NodePath("../../Objectives/Red")
 previous_waypoint = NodePath("../R4")
 
-[node name="RedFlag" parent="Objectives" index="0" instance=ExtResource( 7 )]
-position = Vector2( 90, 40 )
+[node name="Red" parent="Objectives" index="0" instance=ExtResource( 7 )]
+position = Vector2( 90, 56 )
+team = 2
 
-[node name="BlueFlag" parent="Objectives" index="1" instance=ExtResource( 8 )]
-position = Vector2( 90, 280 )
+[node name="Area" parent="Objectives/Red" index="0"]
+shape = SubResource( 7 )
+
+[node name="Blue" parent="Objectives" index="1" instance=ExtResource( 7 )]
+position = Vector2( 90, 264 )
+team = 1
+
+[node name="Area" parent="Objectives/Blue" index="0"]
+shape = SubResource( 8 )
 
 [editable path="SpawnPoints/BlueL"]
 [editable path="SpawnPoints/BlueR"]
@@ -189,3 +202,5 @@ position = Vector2( 90, 280 )
 [editable path="Obstacles/Obstacle7"]
 [editable path="Obstacles/Obstacle8"]
 [editable path="Obstacles/Obstacle9"]
+[editable path="Objectives/Red"]
+[editable path="Objectives/Blue"]

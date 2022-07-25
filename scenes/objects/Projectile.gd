@@ -17,12 +17,13 @@ export (int) var power: int = 1
 export (float) var speed: float = 120  # pixels / sec
 export (float) var decay: float = 0.125  # secs
 
+var source: WeakRef
 var target: Vector2 = Vector2()
 var travel_distance: float = 0.0
 
 onready var sprite: Sprite = $Sprite
 onready var state = FSM.TRAVEL
-onready var collision_target = null
+onready var collision_target: WeakRef = null
 
 
 ################################################################################
@@ -31,7 +32,9 @@ onready var collision_target = null
 
 func do_effect():
     if collision_target != null:
-        collision_target.take_physical_damage(power)
+        var target = collision_target.get_ref()
+        if target:
+            target.take_physical_damage(power, source)
 
 
 ################################################################################
@@ -68,7 +71,7 @@ func _physics_process(delta):
         travel_distance -= vel.length()
     else:
         state = FSM.IMPACT
-        collision_target = col.collider
+        collision_target = weakref(col.collider)
         travel_distance -= col.travel.length()
     if travel_distance <= 0 and state == FSM.TRAVEL:
         state = FSM.IMPACT

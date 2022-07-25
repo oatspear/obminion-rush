@@ -1,0 +1,14 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://scenes/characters/Minion.tscn" type="PackedScene" id=1]
+[ext_resource path="res://assets/objects/aura.png" type="Texture" id=2]
+[ext_resource path="res://scenes/characters/Hero.gd" type="Script" id=3]
+
+[node name="Hero" instance=ExtResource( 1 )]
+script = ExtResource( 3 )
+move_speed = 30.0
+
+[node name="Aura" type="Sprite" parent="." index="0"]
+modulate = Color( 1, 1, 1, 0.752941 )
+position = Vector2( 0, 2 )
+texture = ExtResource( 2 )

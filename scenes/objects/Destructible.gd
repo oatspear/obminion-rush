@@ -4,7 +4,7 @@ extends StaticBody2D
 # Signals
 ################################################################################
 
-signal destroyed()
+signal captured()
 
 ################################################################################
 # Attributes
@@ -26,12 +26,12 @@ func is_alive() -> bool:
     return health > 0
 
 
-func take_physical_damage(damage: int):
+func take_physical_damage(damage: int, source: WeakRef):
     if health > 0:
         health -= damage
         health_bar.set_value(health, max_health)
         if health <= 0:
-            emit_signal("destroyed")
+            emit_signal("captured")
 
 
 ################################################################################

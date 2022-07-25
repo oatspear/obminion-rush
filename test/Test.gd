@@ -15,6 +15,8 @@ const SCN_ENEMY1 = preload("res://scenes/characters/HumanWarriorRed.tscn")
 const SCN_ENEMY2 = preload("res://scenes/characters/HumanArcherPurple.tscn")
 const SCN_ENEMY3 = preload("res://scenes/characters/HumanMageRed.tscn")
 
+const SCN_HERO1 = preload("res://scenes/characters/HeroSoldierBlue.tscn")
+
 onready var stage = $Stage
 
 var player_team = [
@@ -57,6 +59,7 @@ func _ready():
         next_player_unit = _random_unit(player_team)
     next_unit_icon.frames = next_player_unit[0]
     gold_label.set_value(player_coins)
+    _spawn_heroes()
 
 
 func _random_unit(team: Array):
@@ -76,6 +79,7 @@ func _on_spawn_projectile(projectile, source, target):
 func _spawn_projectile(scene, source, target):
     var obj = scene.instance()
     obj.team = source.team
+    obj.source = weakref(source)
     obj.position = source.position
     obj.target = target.position
     obj.power = source.power
@@ -87,6 +91,19 @@ func _spawn_minion(scn: PackedScene, team: int, spawn: int):
     minion.team = team
     minion.connect("spawn_projectile", self, "_on_spawn_projectile")
     stage.spawn_minion(minion, spawn)
+
+
+func _spawn_heroes():
+    # blue
+    var minion = SCN_HERO1.instance()
+    minion.team = Global.Teams.BLUE
+    minion.connect("spawn_projectile", self, "_on_spawn_projectile")
+    stage.spawn_hero(minion)
+    # red
+    minion = SCN_HERO1.instance()
+    minion.team = Global.Teams.RED
+    minion.connect("spawn_projectile", self, "_on_spawn_projectile")
+    stage.spawn_hero(minion)
 
 
 func _on_button_clicked(i: int):

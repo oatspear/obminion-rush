@@ -15,6 +15,7 @@ export (int) var power: int = 1
 export (float) var speed: float = 120  # pixels / sec
 export (float) var decay: float = 0.125  # secs
 
+var source: WeakRef
 var target: WeakRef
 var travel_distance: float = 0.0
 
@@ -30,7 +31,7 @@ func do_effect():
         return
     var t = target.get_ref()
     if t:
-        t.take_physical_damage(power)
+        t.take_physical_damage(power, source)
 
 
 ################################################################################
