@@ -55,6 +55,7 @@ func _ready():
     next_player_unit = _random_unit(player_team)
     for i in range(len(buttons)):
         buttons[i].connect("pressed", self, "_on_button_clicked", [i])
+        buttons[i].connect("reset_cooldown", self, "_on_button_reset_cooldown", [i])
         buttons[i].set_unit(next_player_unit[0], next_player_unit[1])
         buttons[i].unit_type = next_player_unit[2]
         next_player_unit = _random_unit(player_team)
@@ -119,11 +120,18 @@ func _on_button_clicked(i: int):
         # regenerate next unit
         buttons[i].set_unit(next_player_unit[0], next_player_unit[1])
         buttons[i].unit_type = next_player_unit[2]
+        buttons[i].disable()
+        buttons[i].start_cooldown()
         next_player_unit = _random_unit(player_team)
         next_unit_icon.frames = next_player_unit[0]
     for button in buttons:
         if button.cost > player_coins:
             button.disable()
+
+
+func _on_button_reset_cooldown(i: int):
+    if buttons[i].cost <= player_coins:
+        buttons[i].enable()
 
 
 func _on_EnemyTimer_timeout():
@@ -136,7 +144,7 @@ func _on_EnemyTimer_timeout():
     player_coins += 1
     gold_label.set_value(player_coins)
     for button in buttons:
-        if button.cost <= player_coins:
+        if button.cost <= player_coins and not button.is_on_cooldown():
             button.enable()
 
 

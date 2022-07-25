@@ -1,6 +1,18 @@
 extends TextureButton
 
 ################################################################################
+# Constants
+################################################################################
+
+const COOLDOWN = 1.0  # secs
+
+################################################################################
+# Signals
+################################################################################
+
+signal reset_cooldown()
+
+################################################################################
 # Variables
 ################################################################################
 
@@ -11,6 +23,7 @@ onready var unit_icon: AnimatedSprite = $Icon
 onready var cost_icon: Sprite = $Cost
 onready var overlay: Sprite = $Overlay
 
+var timer: float = 0
 
 ################################################################################
 # Interface
@@ -18,37 +31,44 @@ onready var overlay: Sprite = $Overlay
 
 func set_unit(unit_frames: SpriteFrames, unit_cost: int):
     assert(unit_cost >= 0 and unit_cost <= Global.MAX_UNIT_COST)
-    cost = unit_cost
     unit_icon.frames = unit_frames
-    set_available(not disabled)
-
-
-func set_available(available: bool = true):
-    disabled = not available
-    if available:
+    set_cost(unit_cost)
+    cost = unit_cost
+    if disabled:
         unit_icon.animation = Global.ANIM_IDLE
     else:
-        unit_icon.animation = Global.ANIM_SNOOZE
-    _refresh_cost()
+        unit_icon.animation = Global.ANIM_ATTACK
 
 
 func enable():
-    disabled = false
-    overlay.visible = false
-    _refresh_cost()
+    if disabled:
+        disabled = false
+        overlay.visible = false
+        unit_icon.animation = Global.ANIM_ATTACK
+        _refresh_cost()
 
 func disable():
-    disabled = true
-    overlay.visible = true
-    var r = randi() % 4
-    overlay.flip_h = r % 2 == 0
-    overlay.flip_v = r >= 2
-    _refresh_cost()
+    if not disabled:
+        disabled = true
+        overlay.visible = true
+        var r = randi() % 4
+        overlay.flip_h = r % 2 == 0
+        overlay.flip_v = r >= 2
+        unit_icon.animation = Global.ANIM_IDLE
+        _refresh_cost()
 
 
 func set_cost(unit_cost: int):
     cost = unit_cost
     _refresh_cost()
+
+
+func start_cooldown():
+    timer = COOLDOWN
+
+
+func is_on_cooldown() -> bool:
+    return timer > 0
 
 
 ################################################################################
@@ -59,6 +79,18 @@ func _ready():
     overlay.visible = disabled
     _refresh_cost()
 
+
+func _process(delta):
+    if timer > 0:
+        timer -= delta
+        if timer <= 0:
+            timer = 0
+            emit_signal("reset_cooldown")
+
+
+################################################################################
+# Helper Functions
+################################################################################
 
 func _refresh_cost():
     if cost <= 0:
