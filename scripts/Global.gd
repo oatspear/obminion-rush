@@ -35,7 +35,7 @@ func get_collision_layer(team: int) -> int:
 
 func get_collision_mask(team: int) -> int:
     assert(team >= 0 and team < Teams.size())
-    return ~(1 << team)
+    return ALL_TEAMS_MASK ^ (1 << team)
 
 func get_collision_mask_teams(team: int) -> int:
     assert(team > Teams.NONE and team < Teams.size())

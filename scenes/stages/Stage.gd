@@ -22,8 +22,8 @@ func num_spawn_points(team: int) -> int:
     return len(spawn_points[team])
 
 
-func spawn_minion(minion, team: int, i: int):
-    var point = spawn_points[team][i]
+func spawn_minion(minion, i: int):
+    var point = spawn_points[minion.team][i]
     minion.position = point.get_random_position()
     var waypoint = point.get_waypoint()
     minion.set_waypoint(waypoint)

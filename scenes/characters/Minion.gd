@@ -248,7 +248,6 @@ func _aim2(target: Vector2) -> Vector2:
 
 func _check_for_enemies():
     for target in range_area.get_overlapping_bodies():
-        print("Target: ", target.name)
         if target == self or target.team == team or not target.is_alive():
             continue
         return target

@@ -72,8 +72,9 @@ func _on_spawn_projectile(projectile, source, target):
 
 func _spawn_projectile(scene, source, target):
     var obj = scene.instance()
+    obj.team = source.team
     obj.position = source.position
-    obj.target = weakref(target)
+    obj.target = target.position
     obj.power = source.power
     stage.spawn_object(obj)
 
@@ -82,7 +83,7 @@ func _spawn_minion(scn: PackedScene, team: int, spawn: int):
     var minion = scn.instance()
     minion.team = team
     minion.connect("spawn_projectile", self, "_on_spawn_projectile")
-    stage.spawn_minion(minion, team, spawn)
+    stage.spawn_minion(minion, spawn)
 
 
 func _on_button_clicked(i: int):
