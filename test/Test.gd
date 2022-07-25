@@ -18,6 +18,8 @@ const SCN_ENEMY3 = preload("res://scenes/characters/HumanMageRed.tscn")
 const SCN_HERO1 = preload("res://scenes/characters/HeroSoldierBlue.tscn")
 const SCN_HERO2 = preload("res://scenes/characters/HeroSoldierRed.tscn")
 
+const BUTTON_COOLDOWN = 1.5
+
 onready var stage = $Stage
 
 var player_team = [
@@ -120,8 +122,7 @@ func _on_button_clicked(i: int):
         # regenerate next unit
         buttons[i].set_unit(next_player_unit[0], next_player_unit[1])
         buttons[i].unit_type = next_player_unit[2]
-        buttons[i].disable()
-        buttons[i].start_cooldown()
+        buttons[i].start_cooldown(BUTTON_COOLDOWN)
         next_player_unit = _random_unit(player_team)
         next_unit_icon.frames = next_player_unit[0]
     for button in buttons:

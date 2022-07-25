@@ -1,12 +1,6 @@
 extends TextureButton
 
 ################################################################################
-# Constants
-################################################################################
-
-const COOLDOWN = 1.0  # secs
-
-################################################################################
 # Signals
 ################################################################################
 
@@ -22,8 +16,7 @@ export (int) var cost: int = 0
 onready var unit_icon: AnimatedSprite = $Icon
 onready var cost_icon: Sprite = $Cost
 onready var overlay: Sprite = $Overlay
-
-var timer: float = 0
+onready var tween: Tween = $Tween
 
 ################################################################################
 # Interface
@@ -63,12 +56,19 @@ func set_cost(unit_cost: int):
     _refresh_cost()
 
 
-func start_cooldown():
-    timer = COOLDOWN
+func start_cooldown(cooldown: float):
+    # tween.stop_all()
+    if not tween.is_active():
+        disable()
+        tween.interpolate_property(unit_icon, "modulate",
+            Color.black, Color.white, cooldown,
+            Tween.TRANS_LINEAR,
+            Tween.EASE_OUT)
+        tween.start()
 
 
 func is_on_cooldown() -> bool:
-    return timer > 0
+    return tween.is_active()
 
 
 ################################################################################
@@ -80,12 +80,12 @@ func _ready():
     _refresh_cost()
 
 
-func _process(delta):
-    if timer > 0:
-        timer -= delta
-        if timer <= 0:
-            timer = 0
-            emit_signal("reset_cooldown")
+################################################################################
+# Events
+################################################################################
+
+func _on_Tween_tween_all_completed():
+    emit_signal("reset_cooldown")
 
 
 ################################################################################
