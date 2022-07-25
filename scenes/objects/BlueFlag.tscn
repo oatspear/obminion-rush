@@ -5,6 +5,7 @@
 
 [node name="BlueFlag" instance=ExtResource( 2 )]
 team = 1
+max_health = 30
 
 [node name="Sprite" parent="." index="1"]
 position = Vector2( 0, -12 )
