@@ -4,7 +4,7 @@
 [ext_resource path="res://data/animation/HumanArcherGreen.tres" type="SpriteFrames" id=2]
 
 [sub_resource type="CircleShape2D" id=1]
-radius = 40.0
+radius = 48.0
 
 [node name="Minion" instance=ExtResource( 1 )]
 max_health = 28

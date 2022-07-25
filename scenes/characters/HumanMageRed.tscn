@@ -4,7 +4,7 @@
 [ext_resource path="res://data/animation/HumanMageRed.tres" type="SpriteFrames" id=2]
 
 [sub_resource type="CircleShape2D" id=1]
-radius = 25.0
+radius = 32.0
 
 [node name="Minion" instance=ExtResource( 1 )]
 power = 5
