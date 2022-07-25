@@ -1,6 +1,7 @@
 extends Node2D
 
 const SCN_ARROW = preload("res://scenes/objects/Arrow.tscn")
+const SCN_FIREBALL = preload("res://scenes/objects/Fireball.tscn")
 
 const FRAMES_PLAYER_SOLDIER = preload("res://data/animation/HumanSoldierBlue.tres")
 const FRAMES_PLAYER_ARCHER = preload("res://data/animation/HumanArcherGreen.tres")
@@ -66,6 +67,8 @@ func _on_spawn_projectile(projectile, source, target):
     match projectile:
         Global.Projectiles.ARROW:
             _spawn_projectile(SCN_ARROW, source, target)
+        Global.Projectiles.FIRE:
+            _spawn_projectile(SCN_FIREBALL, source, target)
         _:
             pass
 

@@ -79,9 +79,11 @@ func do_attack():
 ################################################################################
 
 func _on_Range_body_entered(body):
+    if state != FSM.IDLE and state != FSM.WALK:
+        return
     if body.team == team:
         return
-    if state != FSM.IDLE and state != FSM.WALK:
+    if not body.is_alive():
         return
     _enter_attack(body)
 
@@ -111,7 +113,6 @@ func _on_Sprite_animation_finished():
 func _ready():
     collision_layer = Global.get_collision_layer(team)
     collision_mask = Global.get_collision_mask(team)
-    range_area.collision_layer = Global.get_collision_layer(team)
     range_area.collision_mask = Global.get_collision_mask_teams(team)
     health = max_health
     health_bar.set_value(health, max_health)

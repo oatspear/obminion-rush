@@ -43,7 +43,7 @@ func _ready():
     # requires: set target
     # requires: set power
     # collision_layer = Global.get_collision_layer(team)
-    collision_mask = Global.get_collision_mask(team)
+    collision_mask = Global.get_collision_mask_teams(team)
     travel_distance = position.distance_to(target) + TRAVEL_MARGIN
     var dx = target.x - position.x
     var dy = target.y - position.y

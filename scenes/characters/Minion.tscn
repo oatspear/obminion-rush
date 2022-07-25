@@ -19,7 +19,7 @@ playing = true
 shape = SubResource( 1 )
 
 [node name="Range" type="Area2D" parent="."]
-collision_layer = 0
+collision_layer = 32
 collision_mask = 30
 
 [node name="Area" type="CollisionShape2D" parent="Range"]
