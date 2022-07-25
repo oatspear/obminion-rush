@@ -16,6 +16,7 @@ const SCN_ENEMY2 = preload("res://scenes/characters/HumanArcherPurple.tscn")
 const SCN_ENEMY3 = preload("res://scenes/characters/HumanMageRed.tscn")
 
 const SCN_HERO1 = preload("res://scenes/characters/HeroSoldierBlue.tscn")
+const SCN_HERO2 = preload("res://scenes/characters/HeroSoldierRed.tscn")
 
 onready var stage = $Stage
 
@@ -100,7 +101,7 @@ func _spawn_heroes():
     minion.connect("spawn_projectile", self, "_on_spawn_projectile")
     stage.spawn_hero(minion)
     # red
-    minion = SCN_HERO1.instance()
+    minion = SCN_HERO2.instance()
     minion.team = Global.Teams.RED
     minion.connect("spawn_projectile", self, "_on_spawn_projectile")
     stage.spawn_hero(minion)
