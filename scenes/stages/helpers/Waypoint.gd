@@ -12,7 +12,7 @@ export (NodePath) var previous_waypoint
 ################################################################################
 
 func get_next_waypoint(team: int) -> Node:
-    if team == 0:
+    if team == Global.Teams.BLUE:
         if next_waypoint == null:
             return null
         return get_node(next_waypoint)

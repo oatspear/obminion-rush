@@ -13,7 +13,7 @@ attack_speed = 1.2
 projectile = 1
 move_speed = 18.0
 
-[node name="Sprite" parent="." index="1"]
+[node name="Sprite" parent="." index="0"]
 frames = ExtResource( 2 )
 
 [node name="Area" parent="Range" index="0"]

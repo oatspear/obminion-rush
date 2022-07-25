@@ -46,22 +46,24 @@ tile_data = PoolIntArray( 65536, 8, 0, 65537, 9, 0, 65538, 10, 0, 65539, 11, 0, 
 tile_set = ExtResource( 3 )
 tile_data = PoolIntArray( -65536, 0, 0, -65535, 1, 0, -65534, 2, 0, -65533, 3, 0, -65529, 0, 0, -65528, 1, 0, -65527, 2, 0, -65526, 3, 0, 0, 4, 0, 1, 5, 0, 2, 6, 0, 3, 7, 0, 7, 4, 0, 8, 5, 0, 9, 6, 0, 10, 7, 0, 327679, 113, 0, 262155, 112, 0, 458751, 113, 0, 393226, 117, 0, 393227, 118, 0, 458757, 47, 0, 589823, 113, 0, 720895, 117, 0, 655360, 118, 0, 655365, 47, 0, 655371, 112, 0, 786443, 112, 0, 917503, 113, 0, 917515, 112, 0, 1114112, 0, 0, 1114113, 1, 0, 1114114, 2, 0, 1114115, 3, 0, 1114119, 0, 0, 1114120, 1, 0, 1114121, 2, 0, 1114122, 3, 0, 1179648, 4, 0, 1179649, 5, 0, 1179650, 6, 0, 1179651, 7, 0, 1179655, 4, 0, 1179656, 5, 0, 1179657, 6, 0, 1179658, 7, 0 )
 
-[node name="SpawnPoint" parent="SpawnPoints" index="0" instance=ExtResource( 4 )]
+[node name="BlueL" parent="SpawnPoints" index="0" instance=ExtResource( 4 )]
 position = Vector2( 32, 278 )
+team = 1
 waypoint = NodePath("../../Waypoints/L1")
 
-[node name="SpawnPoint2" parent="SpawnPoints" index="1" instance=ExtResource( 4 )]
+[node name="BlueR" parent="SpawnPoints" index="1" instance=ExtResource( 4 )]
 position = Vector2( 148, 278 )
+team = 1
 waypoint = NodePath("../../Waypoints/R1")
 
-[node name="SpawnPoint3" parent="SpawnPoints" index="2" instance=ExtResource( 4 )]
+[node name="RedL" parent="SpawnPoints" index="2" instance=ExtResource( 4 )]
 position = Vector2( 32, 42 )
-team = 1
+team = 2
 waypoint = NodePath("../../Waypoints/L5")
 
-[node name="SpawnPoint4" parent="SpawnPoints" index="3" instance=ExtResource( 4 )]
+[node name="RedR" parent="SpawnPoints" index="3" instance=ExtResource( 4 )]
 position = Vector2( 148, 42 )
-team = 1
+team = 2
 waypoint = NodePath("../../Waypoints/R5")
 
 [node name="Obstacle" parent="Obstacles" index="0" instance=ExtResource( 5 )]
@@ -119,32 +121,32 @@ position = Vector2( 90, 160 )
 shape = SubResource( 6 )
 
 [node name="L1" parent="Waypoints" index="0" instance=ExtResource( 6 )]
-position = Vector2( 32, 240 )
+position = Vector2( 32, 248 )
 next_waypoint = NodePath("../L2")
 previous_waypoint = NodePath("../../Objectives/BlueFlag")
 
 [node name="L2" parent="Waypoints" index="1" instance=ExtResource( 6 )]
-position = Vector2( 56, 208 )
+position = Vector2( 56, 200 )
 next_waypoint = NodePath("../L3")
 previous_waypoint = NodePath("../L1")
 
 [node name="L3" parent="Waypoints" index="2" instance=ExtResource( 6 )]
-position = Vector2( 56, 152 )
+position = Vector2( 64, 152 )
 next_waypoint = NodePath("../L4")
 previous_waypoint = NodePath("../L2")
 
 [node name="L4" parent="Waypoints" index="3" instance=ExtResource( 6 )]
-position = Vector2( 24, 128 )
+position = Vector2( 24, 144 )
 next_waypoint = NodePath("../L5")
 previous_waypoint = NodePath("../L3")
 
 [node name="L5" parent="Waypoints" index="4" instance=ExtResource( 6 )]
-position = Vector2( 24, 80 )
+position = Vector2( 32, 72 )
 next_waypoint = NodePath("../../Objectives/RedFlag")
 previous_waypoint = NodePath("../L4")
 
 [node name="R1" parent="Waypoints" index="5" instance=ExtResource( 6 )]
-position = Vector2( 152, 240 )
+position = Vector2( 144, 248 )
 next_waypoint = NodePath("../R2")
 previous_waypoint = NodePath("../../Objectives/BlueFlag")
 
@@ -154,7 +156,7 @@ next_waypoint = NodePath("../R3")
 previous_waypoint = NodePath("../R1")
 
 [node name="R3" parent="Waypoints" index="7" instance=ExtResource( 6 )]
-position = Vector2( 120, 160 )
+position = Vector2( 120, 168 )
 next_waypoint = NodePath("../R4")
 previous_waypoint = NodePath("../R2")
 
@@ -164,7 +166,7 @@ next_waypoint = NodePath("../R5")
 previous_waypoint = NodePath("../R3")
 
 [node name="R5" parent="Waypoints" index="9" instance=ExtResource( 6 )]
-position = Vector2( 144, 80 )
+position = Vector2( 144, 72 )
 next_waypoint = NodePath("../../Objectives/RedFlag")
 previous_waypoint = NodePath("../R4")
 
@@ -174,10 +176,10 @@ position = Vector2( 90, 56 )
 [node name="BlueFlag" parent="Objectives" index="1" instance=ExtResource( 8 )]
 position = Vector2( 90, 264 )
 
-[editable path="SpawnPoints/SpawnPoint"]
-[editable path="SpawnPoints/SpawnPoint2"]
-[editable path="SpawnPoints/SpawnPoint3"]
-[editable path="SpawnPoints/SpawnPoint4"]
+[editable path="SpawnPoints/BlueL"]
+[editable path="SpawnPoints/BlueR"]
+[editable path="SpawnPoints/RedL"]
+[editable path="SpawnPoints/RedR"]
 [editable path="Obstacles/Obstacle"]
 [editable path="Obstacles/Obstacle2"]
 [editable path="Obstacles/Obstacle3"]

@@ -87,7 +87,7 @@ func _spawn_minion(scn: PackedScene, team: int, spawn: int):
 
 func _on_button_clicked(i: int):
     var scene = buttons[i].unit_type
-    var team = 0
+    var team = Global.Teams.BLUE
     var spawn = 0
     var cost = buttons[i].cost
     if cost <= player_coins:
@@ -107,8 +107,8 @@ func _on_button_clicked(i: int):
 func _on_EnemyTimer_timeout():
     var r = randi()
     var scene = enemy_team[r % len(enemy_team)]
-    var team = 1
-    var spawn = r % stage.num_spawn_points(1)
+    var team = Global.Teams.RED
+    var spawn = r % stage.num_spawn_points(Global.Teams.RED)
     _spawn_minion(scene, team, spawn)
 
     player_coins += 1
@@ -119,7 +119,7 @@ func _on_EnemyTimer_timeout():
 
 
 func _on_Stage_objective_captured(team: int):
-    if team == 1:  # player (0) captured enemy (1)
+    if team == Global.Teams.RED:  # player (BLUE) captured enemy (RED)
         winlabel.text = "Victory"
     else:
         winlabel.text = "Defeat"

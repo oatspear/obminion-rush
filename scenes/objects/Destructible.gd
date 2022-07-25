@@ -10,7 +10,7 @@ signal destroyed()
 # Attributes
 ################################################################################
 
-export (int) var team: int = -1
+export (Global.Teams) var team: int = Global.Teams.NONE
 export (int) var max_health: int = 20
 
 var health: int = max_health
@@ -21,10 +21,6 @@ onready var health_bar = $HealthBar
 ################################################################################
 # Interface
 ################################################################################
-
-func get_hitbox_position() -> Vector2:
-    return position + $Shape.position
-
 
 func is_alive() -> bool:
     return health > 0
@@ -43,5 +39,7 @@ func take_physical_damage(damage: int):
 ################################################################################
 
 func _ready():
+    collision_layer = Global.get_collision_layer(team)
+    collision_mask = Global.get_collision_mask(team)
     health = max_health
     health_bar.set_value(health, max_health)

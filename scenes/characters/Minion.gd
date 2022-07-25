@@ -20,7 +20,7 @@ signal spawn_projectile(projectile, source, target)
 # Attributes
 ################################################################################
 
-export (int) var team: int = 0
+export (Global.Teams) var team: int = Global.Teams.NONE
 export (int) var max_health: int = 20
 export (int) var power: int = 2
 export (float) var attack_speed: float = 1.0  # sec
@@ -47,9 +47,6 @@ onready var health_bar = $HealthBar
 ################################################################################
 # Interface
 ################################################################################
-
-func get_hitbox_position() -> Vector2:
-    return position + $Shape.position
 
 func set_waypoint(point: Vector2):
     waypoint = point
@@ -112,6 +109,10 @@ func _on_Sprite_animation_finished():
 ################################################################################
 
 func _ready():
+    collision_layer = Global.get_collision_layer(team)
+    collision_mask = Global.get_collision_mask(team)
+    range_area.collision_layer = Global.get_collision_layer(team)
+    range_area.collision_mask = Global.get_collision_mask_teams(team)
     health = max_health
     health_bar.set_value(health, max_health)
     sprite.animation = Global.ANIM_IDLE
@@ -205,7 +206,7 @@ func _process_attack(delta: float):
         _process_idle(delta)
 
 
-func _physics_process_walk(delta):
+func _physics_process_walk(_delta):
     if waypoint == null:
         return
     velocity = _aim(waypoint)
@@ -219,6 +220,11 @@ func _physics_process_walk(delta):
 
 
 func _aim(target: Vector2) -> Vector2:
+    if position.distance_squared_to(target) < 4:
+        return Vector2.ZERO
+    return (target - position).normalized()
+
+func _aim2(target: Vector2) -> Vector2:
     var dx = target.x - position.x
     var dy = target.y - position.y
     if dx < -EPSILON:
@@ -242,6 +248,7 @@ func _aim(target: Vector2) -> Vector2:
 
 func _check_for_enemies():
     for target in range_area.get_overlapping_bodies():
+        print("Target: ", target.name)
         if target == self or target.team == team or not target.is_alive():
             continue
         return target

@@ -45,7 +45,7 @@ func _ready():
     if not t:
         queue_free()
         return
-    var p: Vector2 = t.get_hitbox_position()
+    var p: Vector2 = t.position
     travel_distance = position.distance_to(p) + 16
     var dx = p.x - position.x
     var dy = p.y - position.y
@@ -67,7 +67,7 @@ func _physics_process(delta):
     if not t:
         state = FSM.IMPACT
         return
-    var p = t.get_hitbox_position()
+    var p = t.position
     if position.distance_to(p) < 1:
         state = FSM.IMPACT
     else:

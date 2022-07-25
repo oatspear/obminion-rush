@@ -13,8 +13,6 @@ const SOUTHEAST: Vector2 = Vector2(_UNIT_NORMAL, _UNIT_NORMAL)
 
 enum Direction { N, S, E, W, NW, NE, SW, SE }
 
-const UNIT_HITBOX: int = 8  # pixels (length)
-
 enum Projectiles { NONE, ARROW, FIRE }
 
 const ANIM_IDLE = "default"
@@ -25,3 +23,20 @@ const ANIM_DEATH = "death"
 
 const MIN_UNIT_COST = 1
 const MAX_UNIT_COST = 5
+
+enum Teams {NONE, BLUE, RED, GREEN, YELLOW}
+
+const WORLD_MASK = 1 << Teams.NONE
+const ALL_TEAMS_MASK = 0b11111
+
+func get_collision_layer(team: int) -> int:
+    assert(team >= 0 and team < Teams.size())
+    return 1 << team
+
+func get_collision_mask(team: int) -> int:
+    assert(team >= 0 and team < Teams.size())
+    return ~(1 << team)
+
+func get_collision_mask_teams(team: int) -> int:
+    assert(team > Teams.NONE and team < Teams.size())
+    return ALL_TEAMS_MASK ^ WORLD_MASK ^ (1 << team)
