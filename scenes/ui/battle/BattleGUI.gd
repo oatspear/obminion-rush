@@ -11,12 +11,17 @@ signal spawn_minion_requested(i)
 # Variables
 ################################################################################
 
+onready var status_bar = $Margin/V/StatusBar
 onready var viewport_control = $Margin/V/ViewportControl
 onready var action_bar = $Margin/V/ActionBar
 
 ################################################################################
 # Interface
 ################################################################################
+
+func set_player_gold(value: int):
+    status_bar.set_player_gold(value)
+
 
 func set_action_button(
     i: int,

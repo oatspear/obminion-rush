@@ -119,11 +119,14 @@ func _on_button_clicked(i: int):
     var cost = buttons[i].cost
     if cost <= player_coins:
         player_coins -= cost
+        ########
+        # gui.set_player_gold(player_coins)
         gold_label.set_value(player_coins)
+        ########
         _spawn_minion(scene, team, spawn)
         # regenerate next unit
         ########
-        # gui.set_action_button(i, next_player_unit[2], next_player_unit[0], next_player_unit[1])
+        # gui.set_action_button(i, next_player_unit[2], next_player_unit[0], next_player_unit[1], BUTTON_COOLDOWN)
         buttons[i].set_unit(next_player_unit[0], next_player_unit[1])
         buttons[i].unit_type = next_player_unit[2]
         buttons[i].start_cooldown(BUTTON_COOLDOWN)
