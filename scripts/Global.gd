@@ -13,6 +13,18 @@ const SOUTHEAST: Vector2 = Vector2(_UNIT_NORMAL, _UNIT_NORMAL)
 
 enum Direction { N, S, E, W, NW, NE, SW, SE }
 
+enum AttackRanges {  # in pixels
+    MELEE = 10,
+    SHORT = 24,
+    MEDIUM = 32,
+    LONG = 40,
+    VERY_LONG = 48,
+    MAXIMUM = 64
+}
+
+enum DamageTypes { PHYSICAL, FIRE }
+enum ArmorTypes { UNARMORED, LIGHT, MEDIUM, HEAVY }
+
 enum Projectiles { NONE, ARROW, FIRE }
 
 const ANIM_IDLE = "default"

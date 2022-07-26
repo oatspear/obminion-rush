@@ -88,7 +88,7 @@ animations = [ {
 max_health = 40
 attack_speed = 0.8
 
-[node name="Sprite" parent="." index="1"]
+[node name="Sprite" parent="." index="0"]
 frames = SubResource( 15 )
 
 [node name="Area" parent="Range" index="0"]
