@@ -1,11 +1,13 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://scenes/ui/battle/ActionButton.tscn" type="PackedScene" id=1]
+[ext_resource path="res://scenes/ui/battle/ActionBar.gd" type="Script" id=2]
 
 [node name="ActionBar" type="HBoxContainer"]
 margin_right = 40.0
 margin_bottom = 40.0
 alignment = 1
+script = ExtResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -25,3 +27,7 @@ margin_left = 104.0
 margin_top = 4.0
 margin_right = 152.0
 margin_bottom = 36.0
+
+[connection signal="pressed" from="ActionButton1" to="." method="_on_ActionButton1_pressed"]
+[connection signal="pressed" from="ActionButton2" to="." method="_on_ActionButton2_pressed"]
+[connection signal="pressed" from="ActionButton3" to="." method="_on_ActionButton3_pressed"]

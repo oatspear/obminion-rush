@@ -10,8 +10,8 @@ signal reset_cooldown()
 # Variables
 ################################################################################
 
-export (Resource) var unit_type = null
-export (int) var cost: int = 0
+var unit_type: int = 0
+var cost: int = 0
 
 onready var unit_icon: AnimatedSprite = $Icon
 onready var cost_icon: Sprite = $Cost
@@ -22,8 +22,9 @@ onready var tween: Tween = $Tween
 # Interface
 ################################################################################
 
-func set_unit(unit_frames: SpriteFrames, unit_cost: int):
+func set_unit(uid: int, unit_frames: SpriteFrames, unit_cost: int):
     assert(unit_cost >= 0 and unit_cost <= Global.MAX_UNIT_COST)
+    unit_type = uid
     unit_icon.frames = unit_frames
     set_cost(unit_cost)
     cost = unit_cost

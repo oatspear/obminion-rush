@@ -34,6 +34,8 @@ var enemy_team = [
     SCN_ENEMY3,
 ]
 
+onready var gui = $BattleGUI
+
 onready var buttons = [
     $BattleGUI/Margin/V/ActionBar/ActionButton1,
     $BattleGUI/Margin/V/ActionBar/ActionButton2,
@@ -120,9 +122,12 @@ func _on_button_clicked(i: int):
         gold_label.set_value(player_coins)
         _spawn_minion(scene, team, spawn)
         # regenerate next unit
+        ########
+        # gui.set_action_button(i, next_player_unit[2], next_player_unit[0], next_player_unit[1])
         buttons[i].set_unit(next_player_unit[0], next_player_unit[1])
         buttons[i].unit_type = next_player_unit[2]
         buttons[i].start_cooldown(BUTTON_COOLDOWN)
+        ########
         next_player_unit = _random_unit(player_team)
         next_unit_icon.frames = next_player_unit[0]
     for button in buttons:

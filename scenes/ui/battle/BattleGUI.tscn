@@ -1,10 +1,13 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://scenes/ui/battle/StatusBar.tscn" type="PackedScene" id=1]
+[ext_resource path="res://scenes/ui/battle/ViewportControl.tscn" type="PackedScene" id=2]
 [ext_resource path="res://scenes/ui/battle/ActionBar.tscn" type="PackedScene" id=3]
+[ext_resource path="res://scenes/ui/battle/BattleGUI.gd" type="Script" id=4]
 
 [node name="BattleGUI" type="CanvasLayer"]
 layer = 3
+script = ExtResource( 4 )
 
 [node name="Margin" type="MarginContainer" parent="."]
 anchor_right = 1.0
@@ -29,13 +32,17 @@ alignment = 2
 margin_right = 172.0
 margin_bottom = 16.0
 
-[node name="Spacing" type="Control" parent="Margin/V"]
+[node name="ViewportControl" parent="Margin/V" instance=ExtResource( 2 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
 margin_top = 20.0
 margin_right = 172.0
 margin_bottom = 280.0
-size_flags_vertical = 3
 
 [node name="ActionBar" parent="Margin/V" instance=ExtResource( 3 )]
 margin_top = 284.0
 margin_right = 172.0
 margin_bottom = 316.0
+
+[connection signal="area_selected" from="Margin/V/ViewportControl" to="." method="_on_ViewportControl_area_selected"]
+[connection signal="button_selected" from="Margin/V/ActionBar" to="." method="_on_ActionBar_button_selected"]
