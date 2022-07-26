@@ -28,4 +28,4 @@ margin_bottom = 8.0
 size_flags_vertical = 8
 custom_fonts/font = ExtResource( 2 )
 text = "0"
-valign = 2
+valign = 1

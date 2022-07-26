@@ -28,4 +28,4 @@ size_flags_horizontal = 4
 size_flags_vertical = 3
 custom_fonts/font = ExtResource( 2 )
 text = "next"
-valign = 2
+valign = 1
