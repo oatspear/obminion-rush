@@ -14,6 +14,7 @@ enum FSM { IDLE, WALK, ATTACK, COOLDOWN, PURSUIT, DYING }
 ################################################################################
 
 signal spawn_projectile(projectile, source, target)
+signal took_damage(amount)
 signal died()
 
 
@@ -79,12 +80,13 @@ func is_idle() -> bool:
     return state == FSM.IDLE
 
 
-func take_physical_damage(damage: int, source: WeakRef):
+func take_physical_damage(damage: int, _source: WeakRef):
     if state != FSM.DYING:
         health -= damage
         if health <= 0:
             _enter_dying()
         health_bar.set_value(health, max_health)
+        emit_signal("took_damage", damage)
 
 
 func do_attack():

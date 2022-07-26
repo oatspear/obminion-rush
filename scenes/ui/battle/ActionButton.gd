@@ -60,11 +60,11 @@ func start_cooldown(cooldown: float):
     if not tween.is_active():
         disable()
         unit_icon.animation = Global.ANIM_IDLE
-        tween.interpolate_property(unit_icon, "modulate",
+        var _np = tween.interpolate_property(unit_icon, "modulate",
             Color.black, Color.white, cooldown,
             Tween.TRANS_LINEAR,
             Tween.EASE_OUT)
-        tween.start()
+        _np = tween.start()
 
 
 func is_on_cooldown() -> bool:

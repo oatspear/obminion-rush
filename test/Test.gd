@@ -24,6 +24,12 @@ const SCN_HERO2 = preload("res://scenes/characters/HeroSoldierRed.tscn")
 
 const BUTTON_COOLDOWN = 1.5
 
+const SCORE_TIME_FAST = 60.0  # first minute
+const SCORE_TIME_EARLY = 60.0 * 2  # first two minutes
+const SCORE_TIME_LATE = 60.0 * 5  # five minutes onward
+
+const INCOME_RATE = 2.0  # one coin every second
+
 ################################################################################
 # Variables
 ################################################################################
@@ -47,12 +53,21 @@ var enemy_team = [
 onready var gui = $BattleGUI
 
 var player_coins = 12
+var player_score = 0
 var next_player_unit: int = 0
 
 onready var wingraphic: CanvasLayer = $WinGraphic
 onready var winlabel: Label = $WinGraphic/CenterContainer/Label
 onready var tween: Tween = $Tween
 
+var _temp_unit_type: int = -1
+var _playing: bool = true
+
+var _player_hero: WeakRef
+var _enemy_hero: WeakRef
+var _playtime: float = 0
+
+onready var _income_timer: float = INCOME_RATE
 
 ################################################################################
 # Initialization
@@ -63,19 +78,30 @@ func _ready():
     next_player_unit = _randi(player_team)
     var unit = player_team[next_player_unit]
     for i in range(gui.get_num_action_buttons()):
-        #buttons[i].connect("pressed", self, "_on_button_clicked", [i])
-        #buttons[i].connect("reset_cooldown", self, "_on_button_reset_cooldown", [i])
         gui.set_action_button(i, next_player_unit, unit[0], unit[1])
         next_player_unit = _randi(player_team)
         unit = player_team[next_player_unit]
     gui.set_next_role(unit[3])
     gui.set_player_gold(player_coins)
+    gui.ensure_area_selectors(stage.num_spawn_points(Global.Teams.BLUE))
     _spawn_heroes()
 
 
 ################################################################################
 # Game Logic
 ################################################################################
+
+func _process(delta):
+    _playtime += delta
+    var refresh = false
+    _income_timer -= delta
+    while _income_timer <= 0:
+        player_coins += 1
+        _income_timer += INCOME_RATE
+        refresh = true
+    if refresh:
+        gui.set_player_gold(player_coins)
+
 
 func _randi(collection) -> int:
     return randi() % len(collection)
@@ -118,11 +144,14 @@ func _spawn_heroes():
     minion.team = Global.Teams.BLUE
     minion.connect("spawn_projectile", self, "_on_spawn_projectile")
     stage.spawn_hero(minion)
+    _player_hero = weakref(minion)
     # red
     minion = SCN_HERO2.instance()
     minion.team = Global.Teams.RED
     minion.connect("spawn_projectile", self, "_on_spawn_projectile")
+    minion.connect("took_damage", self, "_on_enemy_took_damage")
     stage.spawn_hero(minion)
+    _enemy_hero = weakref(minion)
 
 
 ################################################################################
@@ -136,34 +165,49 @@ func _on_EnemyTimer_timeout():
     var spawn = r % stage.num_spawn_points(Global.Teams.RED)
     _spawn_minion(scene, team, spawn)
 
-    player_coins += 2
-    gui.set_player_gold(player_coins)
-
 
 func _on_Stage_objective_captured(team: int):
+    if not _playing:
+        return
     if team == Global.Teams.RED:  # player (BLUE) captured enemy (RED)
         winlabel.text = "Victory"
     else:
         winlabel.text = "Defeat"
-    tween.interpolate_property(wingraphic, "offset",
+    var _np = tween.interpolate_property(wingraphic, "offset",
         wingraphic.offset, Vector2.ZERO, 1.0,
         Tween.TRANS_SINE,
         Tween.EASE_OUT)
-    tween.start()
+    _np = tween.start()
     $EnemyTimer.stop()
+    _playing = false
 
 
-func _on_BattleGUI_spawn_minion_requested(i, unit_type):
-    var unit = player_team[unit_type]
+func _on_BattleGUI_spawn_minion_requested(_i, unit_type):
+    print("spawn unit requested: ", unit_type)
+    _temp_unit_type = unit_type
+    var spawns = stage.get_spawn_points(Global.Teams.BLUE)
+    for i in range(len(spawns)):
+        gui.set_area_selector(i, spawns[i])
+    gui.select_target_area()
+
+
+func _on_BattleGUI_area_selected(i: int, _x: float, _y: float):
+    print("spawn area selected: ", i)
+    var unit = player_team[_temp_unit_type]
     var scene = unit[2]
     var team = Global.Teams.BLUE
-    var spawn = 0
     var cost = unit[1]
     if cost <= player_coins:
-        _spawn_minion(scene, team, spawn)
+        _spawn_minion(scene, team, i)
         # regenerate next unit
         unit = player_team[next_player_unit]
-        gui.set_action_button(i, next_player_unit, unit[0], unit[1], BUTTON_COOLDOWN)
+        gui.set_action_button(
+            gui.last_action_button,
+            next_player_unit,
+            unit[0],
+            unit[1],
+            BUTTON_COOLDOWN
+        )
         # update gold last to take into account new button data
         player_coins -= cost
         gui.set_player_gold(player_coins)
@@ -173,5 +217,25 @@ func _on_BattleGUI_spawn_minion_requested(i, unit_type):
         gui.set_next_role(unit[3])
 
 
-func _on_BattleGUI_area_selected(i: int, x: float, y: float):
-    pass # Replace with function body.
+func _on_enemy_took_damage(amount: int):
+    var percent = 0
+    var h = _player_hero.get_ref()
+    if h:
+        percent = round((h.health * 100.0) / h.max_health)
+    var score = 0
+    if percent < 25:
+        score = amount
+    elif percent < 75:
+        score = 2 * amount
+    elif percent == 100:
+        score = 5 * amount
+    else:
+        score = 3 * amount
+    if _playtime < SCORE_TIME_FAST:
+        score *= 2
+    elif _playtime < SCORE_TIME_EARLY:
+        score = int(score * 1.5)
+    elif _playtime > SCORE_TIME_LATE:
+        score = int(score * 0.75)
+    player_score += score
+    gui.set_player_score(player_score)

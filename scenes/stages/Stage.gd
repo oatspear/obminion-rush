@@ -23,6 +23,13 @@ func num_spawn_points(team: int) -> int:
     return len(spawn_points[team])
 
 
+func get_spawn_points(team: int) -> Array:
+    var spawns = []
+    for point in spawn_points[team]:
+        spawns.append(point.position)
+    return spawns
+
+
 func spawn_minion(minion, i: int):
     var point = spawn_points[minion.team][i]
     minion.position = point.get_random_position()

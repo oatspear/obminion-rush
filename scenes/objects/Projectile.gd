@@ -32,9 +32,9 @@ onready var collision_target: WeakRef = null
 
 func do_effect():
     if collision_target != null:
-        var target = collision_target.get_ref()
-        if target:
-            target.take_physical_damage(power, source)
+        var t = collision_target.get_ref()
+        if t:
+            t.take_physical_damage(power, source)
 
 
 ################################################################################

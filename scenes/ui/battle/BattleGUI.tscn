@@ -25,7 +25,6 @@ alignment = 2
 
 [node name="StatusBar" parent="Margin/V" instance=ExtResource( 1 )]
 margin_right = 180.0
-margin_bottom = 15.0
 
 [node name="ViewportControl" parent="Margin/V" instance=ExtResource( 2 )]
 anchor_right = 0.0
@@ -40,5 +39,6 @@ margin_right = 180.0
 margin_bottom = 318.0
 
 [connection signal="area_selected" from="Margin/V/ViewportControl" to="." method="_on_ViewportControl_area_selected"]
+[connection signal="area_selection_canceled" from="Margin/V/ViewportControl" to="." method="_on_ViewportControl_area_selection_canceled"]
 [connection signal="button_ready" from="Margin/V/ActionBar" to="." method="_on_ActionBar_button_ready"]
 [connection signal="button_selected" from="Margin/V/ActionBar" to="." method="_on_ActionBar_button_selected"]

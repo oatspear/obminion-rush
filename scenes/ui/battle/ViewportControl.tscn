@@ -2,12 +2,15 @@
 
 [ext_resource path="res://scenes/ui/battle/ViewportControl.gd" type="Script" id=2]
 
-[node name="ViewportControl" type="Control"]
+[node name="ViewportControl" type="ColorRect"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
+color = Color( 1, 1, 1, 0 )
 script = ExtResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[connection signal="gui_input" from="." to="." method="_on_ViewportControl_gui_input"]

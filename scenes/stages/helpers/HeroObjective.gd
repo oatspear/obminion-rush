@@ -35,7 +35,7 @@ func set_hero(minion: Node2D):
         if prev:
             prev.disconnect("died", self, "_on_hero_died")
     hero = weakref(minion)
-    minion.connect("died", self, "_on_hero_died")
+    var _np = minion.connect("died", self, "_on_hero_died")
 
 
 ################################################################################
@@ -63,7 +63,7 @@ func _on_hero_died():
     emit_signal("captured")
 
 
-func _on_HeroObjective_body_entered(body):
+func _on_HeroObjective_body_entered(_body):
     return
 
 
