@@ -6,6 +6,7 @@
 
 [node name="Hero" instance=ExtResource( 1 )]
 script = ExtResource( 3 )
+follows_lane = false
 move_speed = 30.0
 
 [node name="Aura" type="Sprite" parent="." index="0"]

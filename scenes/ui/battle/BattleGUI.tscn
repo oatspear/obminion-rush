@@ -13,36 +13,32 @@ script = ExtResource( 4 )
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 1
-custom_constants/margin_right = 4
-custom_constants/margin_top = 2
-custom_constants/margin_left = 4
 custom_constants/margin_bottom = 2
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="V" type="VBoxContainer" parent="Margin"]
-margin_left = 4.0
-margin_top = 2.0
-margin_right = 176.0
+margin_right = 180.0
 margin_bottom = 318.0
 alignment = 2
 
 [node name="StatusBar" parent="Margin/V" instance=ExtResource( 1 )]
-margin_right = 172.0
-margin_bottom = 16.0
+margin_right = 180.0
+margin_bottom = 15.0
 
 [node name="ViewportControl" parent="Margin/V" instance=ExtResource( 2 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_top = 20.0
-margin_right = 172.0
-margin_bottom = 280.0
+margin_top = 19.0
+margin_right = 180.0
+margin_bottom = 282.0
 
 [node name="ActionBar" parent="Margin/V" instance=ExtResource( 3 )]
-margin_top = 284.0
-margin_right = 172.0
-margin_bottom = 316.0
+margin_top = 286.0
+margin_right = 180.0
+margin_bottom = 318.0
 
 [connection signal="area_selected" from="Margin/V/ViewportControl" to="." method="_on_ViewportControl_area_selected"]
+[connection signal="button_ready" from="Margin/V/ActionBar" to="." method="_on_ActionBar_button_ready"]
 [connection signal="button_selected" from="Margin/V/ActionBar" to="." method="_on_ActionBar_button_selected"]

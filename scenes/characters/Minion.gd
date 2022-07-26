@@ -26,7 +26,7 @@ export (int) var max_health: int = 20
 export (int) var power: int = 2
 export (float) var attack_speed: float = 1.0  # sec
 export (Global.Projectiles) var projectile: int = Global.Projectiles.NONE
-export (bool) var is_caster: bool = false
+export (bool) var follows_lane: bool = true
 export (int, 1, 5) var cost: int = Global.MIN_UNIT_COST
 
 export (float) var move_speed = 30.0  # pixels / sec
@@ -195,7 +195,8 @@ func _enter_attack(target: Node2D):
     assert(target.team != team)
     state = FSM.ATTACK
     attack_target = weakref(target)
-    sprite.animation = Global.ANIM_CAST if is_caster else Global.ANIM_ATTACK
+    # sprite.animation = Global.ANIM_CAST if is_caster else Global.ANIM_ATTACK
+    sprite.animation = Global.ANIM_ATTACK
     sprite.flip_h = target.position.x < position.x
     timer = attack_speed
 

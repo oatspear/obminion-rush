@@ -22,6 +22,7 @@ func get_next_waypoint(team: int) -> Node:
 
 
 func _on_Waypoint_body_entered(body):
-    var p = get_next_waypoint(body.team)
-    if p != null:
-        body.set_waypoint(p.position)
+    if body.follows_lane:
+        var p = get_next_waypoint(body.team)
+        if p != null:
+            body.set_waypoint(p.position)

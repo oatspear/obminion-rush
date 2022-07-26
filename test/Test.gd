@@ -1,5 +1,9 @@
 extends Node2D
 
+################################################################################
+# Constants
+################################################################################
+
 const SCN_ARROW = preload("res://scenes/objects/Arrow.tscn")
 const SCN_FIREBALL = preload("res://scenes/objects/Fireball.tscn")
 
@@ -20,13 +24,19 @@ const SCN_HERO2 = preload("res://scenes/characters/HeroSoldierRed.tscn")
 
 const BUTTON_COOLDOWN = 1.5
 
+################################################################################
+# Variables
+################################################################################
+
 onready var stage = $Stage
 
 var player_team = [
-    [FRAMES_PLAYER_SOLDIER, 2, SCN_HUMAN1],
-    [FRAMES_PLAYER_ARCHER, 3, SCN_HUMAN2],
-    [FRAMES_PLAYER_MAGE, 2, SCN_HUMAN3],
+    [FRAMES_PLAYER_SOLDIER, 2, SCN_HUMAN1, Global.Roles.MELEE],
+    [FRAMES_PLAYER_ARCHER, 3, SCN_HUMAN2, Global.Roles.RANGED],
+    [FRAMES_PLAYER_MAGE, 2, SCN_HUMAN3, Global.Roles.CASTER],
 ]
+
+var player_roster = []
 
 var enemy_team = [
     SCN_ENEMY1,
@@ -36,36 +46,39 @@ var enemy_team = [
 
 onready var gui = $BattleGUI
 
-onready var buttons = [
-    $BattleGUI/Margin/V/ActionBar/ActionButton1,
-    $BattleGUI/Margin/V/ActionBar/ActionButton2,
-    $BattleGUI/Margin/V/ActionBar/ActionButton3,
-]
-
-
 var player_coins = 12
-onready var gold_label = $BattleGUI/Margin/V/StatusBar/Gold
-
-var next_player_unit
-onready var next_unit_icon = $BattleGUI/Margin/V/StatusBar/Next/Icon/Sprite
+var next_player_unit: int = 0
 
 onready var wingraphic: CanvasLayer = $WinGraphic
 onready var winlabel: Label = $WinGraphic/CenterContainer/Label
 onready var tween: Tween = $Tween
 
 
+################################################################################
+# Initialization
+################################################################################
+
 func _ready():
     randomize()
-    next_player_unit = _random_unit(player_team)
-    for i in range(len(buttons)):
-        buttons[i].connect("pressed", self, "_on_button_clicked", [i])
-        buttons[i].connect("reset_cooldown", self, "_on_button_reset_cooldown", [i])
-        buttons[i].set_unit(next_player_unit[0], next_player_unit[1])
-        buttons[i].unit_type = next_player_unit[2]
-        next_player_unit = _random_unit(player_team)
-    next_unit_icon.frames = next_player_unit[0]
-    gold_label.set_value(player_coins)
+    next_player_unit = _randi(player_team)
+    var unit = player_team[next_player_unit]
+    for i in range(gui.get_num_action_buttons()):
+        #buttons[i].connect("pressed", self, "_on_button_clicked", [i])
+        #buttons[i].connect("reset_cooldown", self, "_on_button_reset_cooldown", [i])
+        gui.set_action_button(i, next_player_unit, unit[0], unit[1])
+        next_player_unit = _randi(player_team)
+        unit = player_team[next_player_unit]
+    gui.set_next_role(unit[3])
+    gui.set_player_gold(player_coins)
     _spawn_heroes()
+
+
+################################################################################
+# Game Logic
+################################################################################
+
+func _randi(collection) -> int:
+    return randi() % len(collection)
 
 
 func _random_unit(team: Array):
@@ -112,36 +125,9 @@ func _spawn_heroes():
     stage.spawn_hero(minion)
 
 
-func _on_button_clicked(i: int):
-    var scene = buttons[i].unit_type
-    var team = Global.Teams.BLUE
-    var spawn = 0
-    var cost = buttons[i].cost
-    if cost <= player_coins:
-        player_coins -= cost
-        ########
-        # gui.set_player_gold(player_coins)
-        gold_label.set_value(player_coins)
-        ########
-        _spawn_minion(scene, team, spawn)
-        # regenerate next unit
-        ########
-        # gui.set_action_button(i, next_player_unit[2], next_player_unit[0], next_player_unit[1], BUTTON_COOLDOWN)
-        buttons[i].set_unit(next_player_unit[0], next_player_unit[1])
-        buttons[i].unit_type = next_player_unit[2]
-        buttons[i].start_cooldown(BUTTON_COOLDOWN)
-        ########
-        next_player_unit = _random_unit(player_team)
-        next_unit_icon.frames = next_player_unit[0]
-    for button in buttons:
-        if button.cost > player_coins:
-            button.disable()
-
-
-func _on_button_reset_cooldown(i: int):
-    if buttons[i].cost <= player_coins:
-        buttons[i].enable()
-
+################################################################################
+# Event Handlers
+################################################################################
 
 func _on_EnemyTimer_timeout():
     var r = randi()
@@ -150,11 +136,8 @@ func _on_EnemyTimer_timeout():
     var spawn = r % stage.num_spawn_points(Global.Teams.RED)
     _spawn_minion(scene, team, spawn)
 
-    player_coins += 1
-    gold_label.set_value(player_coins)
-    for button in buttons:
-        if button.cost <= player_coins and not button.is_on_cooldown():
-            button.enable()
+    player_coins += 2
+    gui.set_player_gold(player_coins)
 
 
 func _on_Stage_objective_captured(team: int):
@@ -168,3 +151,27 @@ func _on_Stage_objective_captured(team: int):
         Tween.EASE_OUT)
     tween.start()
     $EnemyTimer.stop()
+
+
+func _on_BattleGUI_spawn_minion_requested(i, unit_type):
+    var unit = player_team[unit_type]
+    var scene = unit[2]
+    var team = Global.Teams.BLUE
+    var spawn = 0
+    var cost = unit[1]
+    if cost <= player_coins:
+        _spawn_minion(scene, team, spawn)
+        # regenerate next unit
+        unit = player_team[next_player_unit]
+        gui.set_action_button(i, next_player_unit, unit[0], unit[1], BUTTON_COOLDOWN)
+        # update gold last to take into account new button data
+        player_coins -= cost
+        gui.set_player_gold(player_coins)
+        # update next unit hint
+        next_player_unit = _randi(player_team)
+        unit = player_team[next_player_unit]
+        gui.set_next_role(unit[3])
+
+
+func _on_BattleGUI_area_selected(i: int, x: float, y: float):
+    pass # Replace with function body.

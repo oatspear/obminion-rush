@@ -40,3 +40,6 @@ func get_collision_mask(team: int) -> int:
 func get_collision_mask_teams(team: int) -> int:
     assert(team > Teams.NONE and team < Teams.size())
     return ALL_TEAMS_MASK ^ WORLD_MASK ^ (1 << team)
+
+
+enum Roles { MELEE, RANGED, CASTER, HEALER, TANK }

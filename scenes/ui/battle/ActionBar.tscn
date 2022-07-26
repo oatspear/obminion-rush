@@ -29,5 +29,8 @@ margin_right = 152.0
 margin_bottom = 36.0
 
 [connection signal="pressed" from="ActionButton1" to="." method="_on_ActionButton1_pressed"]
+[connection signal="reset_cooldown" from="ActionButton1" to="." method="_on_ActionButton1_reset_cooldown"]
 [connection signal="pressed" from="ActionButton2" to="." method="_on_ActionButton2_pressed"]
+[connection signal="reset_cooldown" from="ActionButton2" to="." method="_on_ActionButton2_reset_cooldown"]
 [connection signal="pressed" from="ActionButton3" to="." method="_on_ActionButton3_pressed"]
+[connection signal="reset_cooldown" from="ActionButton3" to="." method="_on_ActionButton3_reset_cooldown"]

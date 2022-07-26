@@ -39,4 +39,6 @@ text = "Victory"
 [node name="Tween" type="Tween" parent="."]
 
 [connection signal="objective_captured" from="Stage" to="." method="_on_Stage_objective_captured"]
+[connection signal="area_selected" from="BattleGUI" to="." method="_on_BattleGUI_area_selected"]
+[connection signal="spawn_minion_requested" from="BattleGUI" to="." method="_on_BattleGUI_spawn_minion_requested"]
 [connection signal="timeout" from="EnemyTimer" to="." method="_on_EnemyTimer_timeout"]
