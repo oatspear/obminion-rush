@@ -30,7 +30,7 @@ const SCORE_TIME_FAST = 60.0  # first minute
 const SCORE_TIME_EARLY = 60.0 * 2  # first two minutes
 const SCORE_TIME_LATE = 60.0 * 5  # five minutes onward
 
-const INCOME_RATE = 2.0  # one coin every second
+const INCOME_RATE = 2.5  # seconds for one coin
 
 ################################################################################
 # Variables
@@ -192,7 +192,7 @@ func _on_Stage_objective_captured(team: int):
 
 
 func _on_BattleGUI_spawn_minion_requested(_i, unit_type):
-    print("spawn unit requested: ", unit_type)
+    # print("spawn unit requested: ", unit_type)
     _temp_unit_type = unit_type
     var spawns = stage.get_spawn_points(Global.Teams.BLUE)
     for i in range(len(spawns)):
@@ -201,7 +201,7 @@ func _on_BattleGUI_spawn_minion_requested(_i, unit_type):
 
 
 func _on_BattleGUI_area_selected(i: int, _x: float, _y: float):
-    print("spawn area selected: ", i)
+    # print("spawn area selected: ", i)
     var unit = player_team[_temp_unit_type]
     var team = Global.Teams.BLUE
     var cost = unit.cost
