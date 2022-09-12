@@ -1,8 +1,11 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://scenes/characters/Minion.tscn" type="PackedScene" id=1]
 [ext_resource path="res://assets/objects/aura.png" type="Texture" id=2]
 [ext_resource path="res://scenes/characters/Hero.gd" type="Script" id=3]
+
+[sub_resource type="CircleShape2D" id=1]
+resource_local_to_scene = true
 
 [node name="Hero" instance=ExtResource( 1 )]
 script = ExtResource( 3 )
@@ -13,3 +16,6 @@ move_speed = 30.0
 modulate = Color( 1, 1, 1, 0.752941 )
 position = Vector2( 0, 2 )
 texture = ExtResource( 2 )
+
+[node name="Area" parent="Range" index="0"]
+shape = SubResource( 1 )

@@ -13,8 +13,48 @@ const SOUTHEAST: Vector2 = Vector2(_UNIT_NORMAL, _UNIT_NORMAL)
 
 enum Direction { N, S, E, W, NW, NE, SW, SE }
 
+enum PowerLevels {
+    TIER1 = 5,
+    TIER2 = 10,
+    TIER3 = 15,
+    TIER4 = 20,
+    TIER5 = 25,
+    TIER6 = 30,
+    TIER7 = 35,
+    TIER8 = 40,
+    TIER9 = 45,
+    TIER10 = 50,
+    TIER11 = 55
+}
+
+enum HealthLevels {
+    TIER1 = 40,
+    TIER2 = 80,
+    TIER3 = 120,
+    TIER4 = 160,
+    TIER5 = 200,
+    TIER6 = 240,
+    TIER7 = 280,
+    TIER8 = 320,
+    TIER9 = 360,
+    TIER10 = 400,
+    TIER11 = 440,
+    TIER12 = 480
+}
+
+enum SpeedLevels {
+    TIER1 = 8,
+    TIER2 = 12,
+    TIER3 = 16,
+    TIER4 = 20,
+    TIER5 = 24,
+    TIER6 = 28,
+    TIER7 = 32
+}
+
 enum AttackRanges {  # in pixels
     MELEE = 10,
+    CLOSE = 16,
     SHORT = 24,
     MEDIUM = 32,
     LONG = 40,
@@ -22,8 +62,29 @@ enum AttackRanges {  # in pixels
     MAXIMUM = 64
 }
 
-enum DamageTypes { PHYSICAL, FIRE }
-enum ArmorTypes { UNARMORED, LIGHT, MEDIUM, HEAVY }
+enum AttackCooldowns {
+    LONGEST = 2000,   # ms
+    LONG = 1750,      # ms
+    MEDIUM = 1500,    # ms
+    SHORT = 1250,     # ms
+    SHORTEST = 1000,  # ms
+}
+
+enum DamageTypes { PHYSICAL, MAGIC, HERO }
+
+enum ArmorTypes {
+    LIGHT = +2,
+    MEDIUM = 0,
+    HEAVY = -2
+}
+
+enum MagicResistance {
+    LIGHT = +2,
+    MEDIUM = 0,
+    HEAVY = -2
+}
+
+const DAMAGE_DIVISOR: int = 5
 
 enum Projectiles { NONE, ARROW, FIRE }
 

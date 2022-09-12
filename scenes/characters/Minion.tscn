@@ -1,10 +1,13 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://scenes/characters/Minion.gd" type="Script" id=1]
 [ext_resource path="res://scenes/characters/components/HealthBar.tscn" type="PackedScene" id=2]
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 3, 3 )
+
+[sub_resource type="CircleShape2D" id=2]
+resource_local_to_scene = true
 
 [node name="Minion" type="KinematicBody2D"]
 collision_mask = 31
@@ -23,6 +26,7 @@ collision_layer = 32
 collision_mask = 30
 
 [node name="Area" type="CollisionShape2D" parent="Range"]
+shape = SubResource( 2 )
 
 [node name="HealthBar" parent="." instance=ExtResource( 2 )]
 position = Vector2( 0, -16 )

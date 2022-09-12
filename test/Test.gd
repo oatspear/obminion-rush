@@ -6,21 +6,23 @@ extends Node2D
 
 const SCN_ARROW = preload("res://scenes/objects/Arrow.tscn")
 const SCN_FIREBALL = preload("res://scenes/objects/Fireball.tscn")
+const SCN_MINION = preload("res://scenes/characters/Minion.tscn")
+const SCN_HERO = preload("res://scenes/characters/Hero.tscn")
+
+const DATA_BLUE_SOLDIER = preload("res://data/minions/BlueSoldier.tres")
+const DATA_BLUE_MAGE = preload("res://data/minions/CyanMage.tres")
+const DATA_BLUE_ARCHER = preload("res://data/minions/GreenArcher.tres")
+
+const DATA_RED_WARRIOR = preload("res://data/minions/RedWarrior.tres")
+const DATA_RED_MAGE = preload("res://data/minions/RedMage.tres")
+const DATA_RED_ARCHER = preload("res://data/minions/PurpleArcher.tres")
+
+const DATA_BLUE_HERO = preload("res://data/minions/BlueHeroSoldier.tres")
+const DATA_RED_HERO = preload("res://data/minions/RedHeroSoldier.tres")
 
 const FRAMES_PLAYER_SOLDIER = preload("res://data/animation/HumanSoldierBlue.tres")
 const FRAMES_PLAYER_ARCHER = preload("res://data/animation/HumanArcherGreen.tres")
 const FRAMES_PLAYER_MAGE = preload("res://data/animation/HumanMageCyan.tres")
-
-const SCN_HUMAN1 = preload("res://scenes/characters/HumanSoldierBlue.tscn")
-const SCN_HUMAN2 = preload("res://scenes/characters/HumanArcherGreen.tscn")
-const SCN_HUMAN3 = preload("res://scenes/characters/HumanMageCyan.tscn")
-
-const SCN_ENEMY1 = preload("res://scenes/characters/HumanWarriorRed.tscn")
-const SCN_ENEMY2 = preload("res://scenes/characters/HumanArcherPurple.tscn")
-const SCN_ENEMY3 = preload("res://scenes/characters/HumanMageRed.tscn")
-
-const SCN_HERO1 = preload("res://scenes/characters/HeroSoldierBlue.tscn")
-const SCN_HERO2 = preload("res://scenes/characters/HeroSoldierRed.tscn")
 
 const BUTTON_COOLDOWN = 1.5
 
@@ -37,22 +39,24 @@ const INCOME_RATE = 2.0  # one coin every second
 onready var stage = $Stage
 
 var player_team = [
-    [FRAMES_PLAYER_SOLDIER, 2, SCN_HUMAN1, Global.Roles.MELEE],
-    [FRAMES_PLAYER_ARCHER, 3, SCN_HUMAN2, Global.Roles.RANGED],
-    [FRAMES_PLAYER_MAGE, 2, SCN_HUMAN3, Global.Roles.CASTER],
+    DATA_BLUE_SOLDIER,
+    DATA_BLUE_ARCHER,
+    DATA_BLUE_MAGE,
 ]
 
 var player_roster = []
 
 var enemy_team = [
-    SCN_ENEMY1,
-    SCN_ENEMY2,
-    SCN_ENEMY3,
+    DATA_RED_WARRIOR,
+    DATA_RED_ARCHER,
+    DATA_RED_MAGE,
 ]
+
+var enemy_coins = 0
 
 onready var gui = $BattleGUI
 
-var player_coins = 12
+var player_coins = 8
 var player_score = 0
 var next_player_unit: int = 0
 
@@ -78,10 +82,10 @@ func _ready():
     next_player_unit = _randi(player_team)
     var unit = player_team[next_player_unit]
     for i in range(gui.get_num_action_buttons()):
-        gui.set_action_button(i, next_player_unit, unit[0], unit[1])
+        gui.set_action_button(i, next_player_unit, unit.frames, unit.cost)
         next_player_unit = _randi(player_team)
         unit = player_team[next_player_unit]
-    gui.set_next_role(unit[3])
+    gui.set_next_role(unit.role)
     gui.set_player_gold(player_coins)
     gui.ensure_area_selectors(stage.num_spawn_points(Global.Teams.BLUE))
     _spawn_heroes()
@@ -131,23 +135,26 @@ func _spawn_projectile(scene, source, target):
     stage.spawn_object(obj)
 
 
-func _spawn_minion(scn: PackedScene, team: int, spawn: int):
-    var minion = scn.instance()
+func _spawn_minion(base_data: MinionData, team: int, spawn: int):
+    var minion = SCN_MINION.instance()
     minion.team = team
+    minion.base_data = base_data
     minion.connect("spawn_projectile", self, "_on_spawn_projectile")
     stage.spawn_minion(minion, spawn)
 
 
 func _spawn_heroes():
     # blue
-    var minion = SCN_HERO1.instance()
+    var minion = SCN_HERO.instance()
     minion.team = Global.Teams.BLUE
+    minion.base_data = DATA_BLUE_HERO
     minion.connect("spawn_projectile", self, "_on_spawn_projectile")
     stage.spawn_hero(minion)
     _player_hero = weakref(minion)
     # red
-    minion = SCN_HERO2.instance()
+    minion = SCN_HERO.instance()
     minion.team = Global.Teams.RED
+    minion.base_data = DATA_RED_HERO
     minion.connect("spawn_projectile", self, "_on_spawn_projectile")
     minion.connect("took_damage", self, "_on_enemy_took_damage")
     stage.spawn_hero(minion)
@@ -159,11 +166,13 @@ func _spawn_heroes():
 ################################################################################
 
 func _on_EnemyTimer_timeout():
+    enemy_coins += 1
     var r = randi()
-    var scene = enemy_team[r % len(enemy_team)]
-    var team = Global.Teams.RED
-    var spawn = r % stage.num_spawn_points(Global.Teams.RED)
-    _spawn_minion(scene, team, spawn)
+    var unit = enemy_team[r % len(enemy_team)]
+    if unit.cost <= enemy_coins:
+        var team = Global.Teams.RED
+        var spawn = r % stage.num_spawn_points(Global.Teams.RED)
+        _spawn_minion(unit, team, spawn)
 
 
 func _on_Stage_objective_captured(team: int):
@@ -194,18 +203,17 @@ func _on_BattleGUI_spawn_minion_requested(_i, unit_type):
 func _on_BattleGUI_area_selected(i: int, _x: float, _y: float):
     print("spawn area selected: ", i)
     var unit = player_team[_temp_unit_type]
-    var scene = unit[2]
     var team = Global.Teams.BLUE
-    var cost = unit[1]
+    var cost = unit.cost
     if cost <= player_coins:
-        _spawn_minion(scene, team, i)
+        _spawn_minion(unit, team, i)
         # regenerate next unit
         unit = player_team[next_player_unit]
         gui.set_action_button(
             gui.last_action_button,
             next_player_unit,
-            unit[0],
-            unit[1],
+            unit.frames,
+            unit.cost,
             BUTTON_COOLDOWN
         )
         # update gold last to take into account new button data
@@ -214,10 +222,10 @@ func _on_BattleGUI_area_selected(i: int, _x: float, _y: float):
         # update next unit hint
         next_player_unit = _randi(player_team)
         unit = player_team[next_player_unit]
-        gui.set_next_role(unit[3])
+        gui.set_next_role(unit.role)
 
 
-func _on_enemy_took_damage(amount: int):
+func _on_enemy_took_damage(amount: int, _typed: int):
     var percent = 0
     var h = _player_hero.get_ref()
     if h:

@@ -22,6 +22,8 @@ signal died()
 # Attributes
 ################################################################################
 
+export (Resource) var base_data: Resource
+
 export (Global.Teams) var team: int = Global.Teams.NONE
 export (int) var max_health: int = 20
 export (int) var power: int = 2
@@ -29,6 +31,9 @@ export (float) var attack_speed: float = 1.0  # sec
 export (Global.Projectiles) var projectile: int = Global.Projectiles.NONE
 export (bool) var follows_lane: bool = true
 export (int, 1, 5) var cost: int = Global.MIN_UNIT_COST
+export (Global.DamageTypes) var damage_type: int = Global.DamageTypes.PHYSICAL
+export (Global.ArmorTypes) var armor_type: int = Global.ArmorTypes.LIGHT
+export (Global.MagicResistance) var magic_resistance: int = Global.MagicResistance.LIGHT
 
 export (float) var move_speed = 30.0  # pixels / sec
 var waypoint = null
@@ -44,6 +49,7 @@ var velocity: Vector2 = Vector2.ZERO
 
 onready var sprite: AnimatedSprite = $Sprite
 onready var range_area: Area2D = $Range
+onready var range_radius: CollisionShape2D = $Range/Area
 onready var health_bar = $HealthBar
 
 
@@ -80,13 +86,38 @@ func is_idle() -> bool:
     return state == FSM.IDLE
 
 
-func take_physical_damage(damage: int, _source: WeakRef):
-    if state != FSM.DYING:
-        health -= damage
-        if health <= 0:
-            _enter_dying()
-        health_bar.set_value(health, max_health)
-        emit_signal("took_damage", damage)
+func take_damage(damage: int, typed: int, source: WeakRef):
+    var bonus: int = Global.DAMAGE_DIVISOR
+    match typed:
+        Global.DamageTypes.PHYSICAL:
+            bonus += armor_type
+        Global.DamageTypes.MAGIC:
+            bonus += magic_resistance
+        Global.DamageTypes.HERO:
+            pass
+        _:
+            assert(false, 'unexpected damage type')
+# warning-ignore:integer_division
+    damage = damage * bonus / Global.DAMAGE_DIVISOR
+    return take_final_damage(damage, typed, source)
+
+
+func take_physical_damage(damage: int, source: WeakRef):
+    return take_damage(damage, Global.DamageTypes.PHYSICAL, source)
+
+
+func take_magic_damage(damage: int, source: WeakRef):
+    return take_damage(damage, Global.DamageTypes.MAGIC, source)
+
+
+func take_final_damage(damage: int, typed: int, _source: WeakRef):
+    if state == FSM.DYING:
+        return
+    health -= damage
+    if health <= 0:
+        _enter_dying()
+    health_bar.set_value(health, max_health)
+    emit_signal("took_damage", damage, typed)
 
 
 func do_attack():
@@ -148,6 +179,7 @@ func _ready():
     collision_layer = Global.get_collision_layer(team)
     collision_mask = Global.get_collision_mask(team)
     range_area.collision_mask = Global.get_collision_mask_teams(team)
+    _init_from_data(base_data)
     health = max_health
     health_bar.set_value(health, max_health)
     sprite.animation = Global.ANIM_IDLE
@@ -239,6 +271,20 @@ func _enter_dying():
 ################################################################################
 # Helper Functions
 ################################################################################
+
+func _init_from_data(data: MinionData):
+    sprite.frames = data.frames
+    cost = data.cost
+    max_health = data.health
+    power = data.power
+    move_speed = data.move_speed
+    attack_speed = data.attack_speed
+    range_radius.shape.radius = data.attack_range
+    projectile = data.projectile
+    damage_type = data.damage_type
+    armor_type = data.armor_type
+    magic_resistance = data.magic_resistance
+
 
 func _process_idle(delta):
 #    timer -= delta

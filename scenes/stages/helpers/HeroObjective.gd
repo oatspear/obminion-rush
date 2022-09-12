@@ -70,4 +70,4 @@ func _on_HeroObjective_body_entered(_body):
 func _on_HeroObjective_body_exited(body):
     if not hero or body != hero.get_ref():
         return
-    hero.get_ref().cmd_move_to(position)
+    body.cmd_move_to(position)

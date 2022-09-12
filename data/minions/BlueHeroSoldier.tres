@@ -1,20 +1,20 @@
 [gd_resource type="Resource" load_steps=3 format=2]
 
 [ext_resource path="res://scripts/MinionData.gd" type="Script" id=1]
-[ext_resource path="res://data/animation/HumanSoldierBlue.tres" type="SpriteFrames" id=2]
+[ext_resource path="res://data/animation/HeroSoldierBlue.tres" type="SpriteFrames" id=2]
 
 [resource]
 script = ExtResource( 1 )
-name = "Blue Soldier"
+name = "Hero"
 frames = ExtResource( 2 )
 role = 4
-cost = 2
-health = 120
-power = 10
-move_speed = 12.0
-attack_speed = 1.6
+cost = 7
+health = 400
+power = 35
+move_speed = 24.0
+attack_speed = 0.8
 attack_range = 10
 projectile = 0
-damage_type = 0
+damage_type = 2
 armor_type = -2
-magic_resistance = 2
+magic_resistance = -2
