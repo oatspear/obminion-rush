@@ -13,10 +13,10 @@ const SCN_FIREBALL = preload("res://scenes/objects/Fireball.tscn")
 ################################################################################
 
 export (Resource) var minion1_data
-export (Resource) var minion2_data
+export (int, 1, 10) var num_minion1 = 1
 
-var minion1
-var minion2
+export (Resource) var minion2_data
+export (int, 1, 10) var num_minion2 = 1
 
 onready var spawn1: Position2D = $Spawn1
 onready var spawn2: Position2D = $Spawn2
@@ -26,12 +26,14 @@ onready var spawn2: Position2D = $Spawn2
 ################################################################################
 
 func _ready():
-    minion1 = SCN_MINION.instance()
-    minion1.team = Global.Teams.BLUE
-    _spawn_minion(minion1, minion1_data, spawn1, spawn2)
-    minion2 = SCN_MINION.instance()
-    minion2.team = Global.Teams.RED
-    _spawn_minion(minion2, minion2_data, spawn2, spawn1)
+    for i in range(0, num_minion1):
+        var minion = SCN_MINION.instance()
+        minion.team = Global.Teams.BLUE
+        _spawn_minion(minion, minion1_data, spawn1, spawn2)
+    for i in range(0, num_minion2):
+        var minion = SCN_MINION.instance()
+        minion.team = Global.Teams.RED
+        _spawn_minion(minion, minion2_data, spawn2, spawn1)
 
 
 ################################################################################
@@ -41,7 +43,9 @@ func _ready():
 func _spawn_minion(minion, data: MinionData, point: Position2D, waypoint: Position2D):
     minion.base_data = data
     minion.connect("spawn_projectile", self, "_on_spawn_projectile")
-    minion.position = point.position
+    minion.position.y = point.position.y
+    var dx = randi() % 10 - 5
+    minion.position.x = point.position.x + dx
     minion.set_waypoint(waypoint.position)
     add_child(minion)
 
