@@ -1,5 +1,9 @@
 extends Node
 
+################################################################################
+# Directions
+################################################################################
+
 const _UNIT_NORMAL = 0.7071067811865475
 
 const NORTH: Vector2 = Vector2.UP
@@ -12,6 +16,10 @@ const SOUTHWEST: Vector2 = Vector2(-_UNIT_NORMAL, _UNIT_NORMAL)
 const SOUTHEAST: Vector2 = Vector2(_UNIT_NORMAL, _UNIT_NORMAL)
 
 enum Direction { N, S, E, W, NW, NE, SW, SE }
+
+################################################################################
+# Power and Health
+################################################################################
 
 enum PowerLevels {
     TIER1 = 5,
@@ -42,15 +50,29 @@ enum HealthLevels {
     TIER12 = 480
 }
 
-enum SpeedLevels {
-    TIER1 = 8,
-    TIER2 = 12,
-    TIER3 = 16,
-    TIER4 = 20,
-    TIER5 = 24,
-    TIER6 = 28,
-    TIER7 = 32
+################################################################################
+# Movement Speed
+################################################################################
+
+enum MovementSpeeds {
+    SLOWEST = 1,
+    VERY_SLOW,
+    SLOW,
+    MEDIUM,
+    FAST,
+    VERY_FAST,
+    FASTEST
 }
+
+const MOVE_SPEED_FACTOR: int = 4  # pixels per rank
+const BASE_MOVE_SPEED: int = 8
+
+func calc_move_speed(tier: int):
+    return BASE_MOVE_SPEED + MOVE_SPEED_FACTOR * tier
+
+################################################################################
+# Attack Range
+################################################################################
 
 enum AttackRanges {
     MELEE = 1,
@@ -63,16 +85,46 @@ enum AttackRanges {
     MAXIMUM
 }
 
-const ATTACK_RANGE_MULTIPLIER: int = 16  # pixels per rank
+const ATTACK_RANGE_FACTOR: int = 16  # pixels per rank
 const MELEE_ATTACK_RANGE: int = 12  # not quite 16
 
-enum AttackCooldowns {
-    LONGEST = 2000,   # ms
-    LONG = 1750,      # ms
-    MEDIUM = 1500,    # ms
-    SHORT = 1250,     # ms
-    SHORTEST = 1000,  # ms
+func calc_attack_range(tier: int) -> int:
+    if tier <= AttackRanges.MELEE:
+        return MELEE_ATTACK_RANGE
+    return ATTACK_RANGE_FACTOR * tier
+
+################################################################################
+# Attack Speed
+################################################################################
+
+enum AttackSpeeds {
+    SLOWEST = 1,
+    VERY_SLOW,
+    SLOW,
+    MEDIUM,
+    FAST,
+    VERY_FAST,
+    FASTEST
 }
+
+const MIN_ATTACK_SPEED: float = 0.5  # seconds (how long the animation lasts)
+const ATTACK_SPEED_TABLE: Array = [
+    2.0,
+    1.6,
+    1.28,
+    1.0,
+    0.8,
+    0.64,
+    0.5,
+]
+
+func calc_attack_speed(tier: int) -> float:
+    # just look up; formula is approximate
+    return ATTACK_SPEED_TABLE[tier]
+
+################################################################################
+# Weapons and Armor
+################################################################################
 
 enum DamageTypes { PHYSICAL, MAGIC, HERO }
 
@@ -92,11 +144,19 @@ const DAMAGE_DIVISOR: int = 5
 
 enum Projectiles { NONE, ARROW, FIRE }
 
+################################################################################
+# Animations
+################################################################################
+
 const ANIM_IDLE = "default"
 const ANIM_WALK = "walk"
 const ANIM_CAST = "attack"
 const ANIM_ATTACK = "attack"
 const ANIM_DEATH = "death"
+
+################################################################################
+# Other
+################################################################################
 
 const MIN_UNIT_COST = 1
 const MAX_UNIT_COST = 5
