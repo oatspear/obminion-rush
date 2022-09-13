@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://test/MinionTest.gd" type="Script" id=1]
+[ext_resource path="res://data/minions/BlueSoldier.tres" type="Resource" id=2]
+[ext_resource path="res://data/minions/RedWarrior.tres" type="Resource" id=3]
+
+[node name="MinionTest" type="Node2D"]
+script = ExtResource( 1 )
+minion1_data = ExtResource( 2 )
+minion2_data = ExtResource( 3 )
+
+[node name="Spawn1" type="Position2D" parent="."]
+position = Vector2( 64, 224 )
+
+[node name="Spawn2" type="Position2D" parent="."]
+position = Vector2( 128, 64 )
