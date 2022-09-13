@@ -52,15 +52,19 @@ enum SpeedLevels {
     TIER7 = 32
 }
 
-enum AttackRanges {  # in pixels
-    MELEE = 10,
-    CLOSE = 16,
-    SHORT = 24,
-    MEDIUM = 32,
-    LONG = 40,
-    VERY_LONG = 48,
-    MAXIMUM = 64
+enum AttackRanges {
+    MELEE = 1,
+    CLOSE,
+    SHORT,
+    MEDIUM,
+    LONG,
+    FAR,
+    VERY_FAR,
+    MAXIMUM
 }
+
+const ATTACK_RANGE_MULTIPLIER: int = 16  # pixels per rank
+const MELEE_ATTACK_RANGE: int = 12  # not quite 16
 
 enum AttackCooldowns {
     LONGEST = 2000,   # ms

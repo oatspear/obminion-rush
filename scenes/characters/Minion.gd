@@ -87,18 +87,19 @@ func is_idle() -> bool:
 
 
 func take_damage(damage: int, typed: int, source: WeakRef):
-    var bonus: int = Global.DAMAGE_DIVISOR
+    var bonus: int = 0
     match typed:
         Global.DamageTypes.PHYSICAL:
-            bonus += armor_type
+# warning-ignore:integer_division
+            bonus = damage * armor_type / Global.DAMAGE_DIVISOR
         Global.DamageTypes.MAGIC:
-            bonus += magic_resistance
+# warning-ignore:integer_division
+            bonus = damage * magic_resistance / Global.DAMAGE_DIVISOR
         Global.DamageTypes.HERO:
             pass
         _:
             assert(false, 'unexpected damage type')
-# warning-ignore:integer_division
-    damage = damage * bonus / Global.DAMAGE_DIVISOR
+    damage += bonus
     return take_final_damage(damage, typed, source)
 
 
@@ -127,7 +128,7 @@ func do_attack():
         return
     if projectile == Global.Projectiles.NONE:
         # print(name, " punches ", target.name)
-        target.take_physical_damage(power, weakref(self))
+        target.take_damage(power, damage_type, weakref(self))
     else:
         # print(name, " sends a projectile towards ", target.name)
         emit_signal("spawn_projectile", projectile, self, target)
@@ -279,7 +280,10 @@ func _init_from_data(data: MinionData):
     power = data.power
     move_speed = data.move_speed
     attack_speed = data.attack_speed
-    range_radius.shape.radius = data.attack_range
+    var range_units = Global.MELEE_ATTACK_RANGE
+    if data.attack_range > Global.AttackRanges.MELEE:
+        range_units = Global.ATTACK_RANGE_MULTIPLIER * data.attack_range
+    range_radius.shape.radius = range_units
     projectile = data.projectile
     damage_type = data.damage_type
     armor_type = data.armor_type

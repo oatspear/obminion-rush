@@ -8,14 +8,18 @@ const SCN_MINION: PackedScene = preload("res://scenes/characters/Minion.tscn")
 const SCN_ARROW = preload("res://scenes/objects/Arrow.tscn")
 const SCN_FIREBALL = preload("res://scenes/objects/Fireball.tscn")
 
+const MINION_DATA_PATH = "res://data/minions/%s.tres"
+
 ################################################################################
 # Variables
 ################################################################################
 
-export (Resource) var minion1_data
+#export (Resource) var minion1_data
+export (String) var minion1_name = "BlueSoldier"
 export (int, 1, 10) var num_minion1 = 1
 
-export (Resource) var minion2_data
+#export (Resource) var minion2_data
+export (String) var minion2_name = "PurpleArcher"
 export (int, 1, 10) var num_minion2 = 1
 
 onready var spawn1: Position2D = $Spawn1
@@ -26,14 +30,16 @@ onready var spawn2: Position2D = $Spawn2
 ################################################################################
 
 func _ready():
+    var data = load(MINION_DATA_PATH % minion1_name)
     for i in range(0, num_minion1):
         var minion = SCN_MINION.instance()
         minion.team = Global.Teams.BLUE
-        _spawn_minion(minion, minion1_data, spawn1, spawn2)
+        _spawn_minion(minion, data, spawn1, spawn2)
+    data = load(MINION_DATA_PATH % minion2_name)
     for i in range(0, num_minion2):
         var minion = SCN_MINION.instance()
         minion.team = Global.Teams.RED
-        _spawn_minion(minion, minion2_data, spawn2, spawn1)
+        _spawn_minion(minion, data, spawn2, spawn1)
 
 
 ################################################################################

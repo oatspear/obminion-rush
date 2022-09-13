@@ -14,6 +14,7 @@ const TRAVEL_MARGIN = 8  # pixels
 
 export (Global.Teams) var team: int = Global.Teams.NONE
 export (int) var power: int = 1
+export (Global.DamageTypes) var damage_type: int = Global.DamageTypes.PHYSICAL
 export (float) var speed: float = 120  # pixels / sec
 export (float) var decay: float = 0.125  # secs
 
@@ -34,7 +35,7 @@ func do_effect():
     if collision_target != null:
         var t = collision_target.get_ref()
         if t:
-            t.take_physical_damage(power, source)
+            t.take_damage(power, damage_type, source)
 
 
 ################################################################################

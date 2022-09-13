@@ -4,6 +4,7 @@
 [ext_resource path="res://scenes/objects/Projectile.tscn" type="PackedScene" id=2]
 
 [node name="Fireball" instance=ExtResource( 2 )]
+damage_type = 1
 
 [node name="Sprite" parent="." index="1"]
 texture = ExtResource( 1 )
