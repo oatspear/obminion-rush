@@ -56,7 +56,7 @@ var enemy_coins = 0
 
 onready var gui = $BattleGUI
 
-var player_coins = 8
+var player_coins = 4
 var player_score = 0
 var next_player_unit: int = 0
 
@@ -170,6 +170,7 @@ func _on_EnemyTimer_timeout():
     var r = randi()
     var unit = enemy_team[r % len(enemy_team)]
     if unit.cost <= enemy_coins:
+        enemy_coins -= unit.cost
         var team = Global.Teams.RED
         var spawn = r % stage.num_spawn_points(Global.Teams.RED)
         _spawn_minion(unit, team, spawn)

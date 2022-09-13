@@ -71,6 +71,7 @@ func refresh_button_status():
 func ensure_area_selectors(n: int):
     while len(viewport_control.area_selectors) < n:
         viewport_control.add_area_selector()
+    viewport_control.hide_area_selectors()
 
 
 func set_area_selector(i: int, pos: Vector2):
