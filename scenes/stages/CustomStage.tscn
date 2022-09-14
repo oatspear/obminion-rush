@@ -31,11 +31,11 @@ extents = Vector2( 24, 8 )
 resource_local_to_scene = true
 extents = Vector2( 8, 60 )
 
-[sub_resource type="CircleShape2D" id=7]
-radius = 50.0
+[sub_resource type="RectangleShape2D" id=7]
+extents = Vector2( 96, 32 )
 
-[sub_resource type="CircleShape2D" id=8]
-radius = 50.0
+[sub_resource type="RectangleShape2D" id=8]
+extents = Vector2( 96, 32 )
 
 [node name="Stage" instance=ExtResource( 1 )]
 
