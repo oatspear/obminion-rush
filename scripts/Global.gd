@@ -21,34 +21,53 @@ enum Direction { N, S, E, W, NW, NE, SW, SE }
 # Power and Health
 ################################################################################
 
-enum PowerLevels {
-    TIER1 = 5,
-    TIER2 = 10,
-    TIER3 = 15,
-    TIER4 = 20,
-    TIER5 = 25,
-    TIER6 = 30,
-    TIER7 = 35,
-    TIER8 = 40,
-    TIER9 = 45,
-    TIER10 = 50,
-    TIER11 = 55
+enum PowerTiers {
+    TIER0 = 0,
+    TIER1,
+    TIER2,
+    TIER3,
+    TIER4,
+    TIER5,
+    TIER6,
+    TIER7,
+    TIER8,
+    TIER9,
+    TIER10,
+    TIER11,
+    TIER12
 }
 
-enum HealthLevels {
-    TIER1 = 40,
-    TIER2 = 80,
-    TIER3 = 120,
-    TIER4 = 160,
-    TIER5 = 200,
-    TIER6 = 240,
-    TIER7 = 280,
-    TIER8 = 320,
-    TIER9 = 360,
-    TIER10 = 400,
-    TIER11 = 440,
-    TIER12 = 480
+const POWER_FACTOR: int = 5
+
+
+func calc_power(tier: int) -> int:
+    assert(tier in PowerTiers.values())
+    return POWER_FACTOR * tier
+
+
+enum HealthTiers {
+    TIER0 = 0,
+    TIER1,
+    TIER2,
+    TIER3,
+    TIER4,
+    TIER5,
+    TIER6,
+    TIER7,
+    TIER8,
+    TIER9,
+    TIER10,
+    TIER11,
+    TIER12
 }
+
+const HEALTH_FACTOR: int = 40
+
+
+func calc_health(tier: int) -> int:
+    assert(tier in HealthTiers.values())
+    return HEALTH_FACTOR * tier
+
 
 ################################################################################
 # Movement Speed

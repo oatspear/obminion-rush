@@ -277,10 +277,10 @@ func _enter_dying():
 func _init_from_data(data: MinionData):
     sprite.frames = data.get_sprite_frames(team_colour)
     cost = data.cost
-    max_health = data.health
-    power = data.power
+    max_health = Global.calc_health(data.health)
+    power = Global.calc_power(data.power)
     move_speed = Global.calc_move_speed(data.move_speed)
-    attack_speed = data.attack_speed
+    attack_speed = Global.calc_attack_speed(data.attack_speed)
     range_radius.shape.radius = Global.calc_attack_range(data.attack_range)
     projectile = data.projectile
     damage_type = data.damage_type
