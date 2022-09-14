@@ -16,7 +16,7 @@ signal captured()
 # Variables
 ################################################################################
 
-export (Global.Teams) var team: int = Global.Teams.NONE
+export (int) var team: int = 0
 
 var hero: WeakRef
 var timer: float = 0

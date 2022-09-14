@@ -145,7 +145,7 @@ const DAMAGE_DIVISOR: int = 5
 enum Projectiles { NONE, ARROW, FIRE }
 
 ################################################################################
-# Animations
+# Graphics and Animations
 ################################################################################
 
 const ANIM_IDLE = "default"
@@ -154,28 +154,73 @@ const ANIM_CAST = "attack"
 const ANIM_ATTACK = "attack"
 const ANIM_DEATH = "death"
 
+const SPRITEFRAMES_PATH = "res://data/animation/%s/%s/%s.tres"
+
+
+func load_sprite_frames(race: int, minion_name: String, team: int) -> SpriteFrames:
+    assert(race in Races.values())
+    assert(team in TeamColours.values())
+    var race_name = race2str(race)
+    var team_name = team2str(team)
+    var path = SPRITEFRAMES_PATH % [race_name, minion_name, team_name]
+    return load(path) as SpriteFrames
+
+
 ################################################################################
 # Other
 ################################################################################
 
+enum Races {NONE, HUMAN, ORC, UNDEAD, DEMON}
+
+const RACE_STRINGS: Array = [
+    "None",
+    "Human",
+    "Orc",
+    "Undead",
+    "Demon",
+]
+
+func race2str(race: int) -> String:
+    return RACE_STRINGS[race]
+
+
 const MIN_UNIT_COST = 1
 const MAX_UNIT_COST = 5
 
-enum Teams {NONE, BLUE, RED, GREEN, YELLOW}
+enum TeamColours {
+    NONE = 0,
+    RED,
+    BLUE,
+    GREEN,
+    YELLOW
+}
 
-const WORLD_MASK = 1 << Teams.NONE
+const TEAM_STRINGS: Array = [
+    "Black",
+    "Red",
+    "Blue",
+    "Green",
+    "Yellow",
+]
+
+func team2str(team: int) -> String:
+    assert(team >= 0 and team < TeamColours.size())
+    return TEAM_STRINGS[team]
+
+
+const WORLD_MASK = 1 << TeamColours.NONE
 const ALL_TEAMS_MASK = 0b11111
 
 func get_collision_layer(team: int) -> int:
-    assert(team >= 0 and team < Teams.size())
+    assert(team >= 0)
     return 1 << team
 
 func get_collision_mask(team: int) -> int:
-    assert(team >= 0 and team < Teams.size())
+    assert(team >= 0)
     return ALL_TEAMS_MASK ^ (1 << team)
 
 func get_collision_mask_teams(team: int) -> int:
-    assert(team > Teams.NONE and team < Teams.size())
+    assert(team > 0)
     return ALL_TEAMS_MASK ^ WORLD_MASK ^ (1 << team)
 
 

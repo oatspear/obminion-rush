@@ -12,7 +12,7 @@ const TRAVEL_MARGIN = 8  # pixels
 # Variables
 ################################################################################
 
-export (Global.Teams) var team: int = Global.Teams.NONE
+export (int) var team: int = 0
 export (int) var power: int = 1
 export (Global.DamageTypes) var damage_type: int = Global.DamageTypes.PHYSICAL
 export (float) var speed: float = 120  # pixels / sec

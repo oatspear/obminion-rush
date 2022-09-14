@@ -24,7 +24,8 @@ signal died()
 
 export (Resource) var base_data: Resource
 
-export (Global.Teams) var team: int = Global.Teams.NONE
+export (int) var team: int = 0
+export (Global.TeamColours) var team_colour: int = Global.TeamColours.NONE
 export (int) var max_health: int = 20
 export (int) var power: int = 2
 export (float) var attack_speed: float = 1.0  # sec
@@ -274,7 +275,7 @@ func _enter_dying():
 ################################################################################
 
 func _init_from_data(data: MinionData):
-    sprite.frames = data.frames
+    sprite.frames = data.get_sprite_frames(team_colour)
     cost = data.cost
     max_health = data.health
     power = data.power

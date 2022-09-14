@@ -9,20 +9,16 @@ const SCN_FIREBALL = preload("res://scenes/objects/Fireball.tscn")
 const SCN_MINION = preload("res://scenes/characters/Minion.tscn")
 const SCN_HERO = preload("res://scenes/characters/Hero.tscn")
 
-const DATA_BLUE_SOLDIER = preload("res://data/minions/BlueSoldier.tres")
-const DATA_BLUE_MAGE = preload("res://data/minions/CyanMage.tres")
-const DATA_BLUE_ARCHER = preload("res://data/minions/GreenArcher.tres")
+const DATA_BLUE_SOLDIER = preload("res://data/minions/Human/Tier2/Tank.tres")
+const DATA_BLUE_MAGE = preload("res://data/minions/Human/Tier3/Mage.tres")
+const DATA_BLUE_ARCHER = preload("res://data/minions/Human/Tier2/Archer.tres")
 
-const DATA_RED_WARRIOR = preload("res://data/minions/RedWarrior.tres")
-const DATA_RED_MAGE = preload("res://data/minions/RedMage.tres")
-const DATA_RED_ARCHER = preload("res://data/minions/PurpleArcher.tres")
+const DATA_RED_WARRIOR = preload("res://data/minions/Human/Tier2/Warrior.tres")
+const DATA_RED_MAGE = preload("res://data/minions/Human/Tier2/Mage.tres")
+const DATA_RED_ARCHER = preload("res://data/minions/Human/Tier3/Archer.tres")
 
-const DATA_BLUE_HERO = preload("res://data/minions/BlueHeroSoldier.tres")
-const DATA_RED_HERO = preload("res://data/minions/RedHeroSoldier.tres")
-
-const FRAMES_PLAYER_SOLDIER = preload("res://data/animation/HumanSoldierBlue.tres")
-const FRAMES_PLAYER_ARCHER = preload("res://data/animation/HumanArcherGreen.tres")
-const FRAMES_PLAYER_MAGE = preload("res://data/animation/HumanMageCyan.tres")
+const DATA_BLUE_HERO = preload("res://data/minions/Human/Hero/Hero1.tres")
+const DATA_RED_HERO = preload("res://data/minions/Human/Hero/Hero2.tres")
 
 const BUTTON_COOLDOWN = 1.5
 
@@ -32,11 +28,20 @@ const SCORE_TIME_LATE = 60.0 * 5  # five minutes onward
 
 const INCOME_RATE = 2.5  # seconds for one coin
 
+const PLAYER_TEAM = 1
+const ENEMY_TEAM = 2
+
 ################################################################################
 # Variables
 ################################################################################
 
 onready var stage = $Stage
+
+var team_colours = [
+    Global.TeamColours.NONE,
+    Global.TeamColours.BLUE,
+    Global.TeamColours.RED
+]
 
 var player_team = [
     DATA_BLUE_SOLDIER,
@@ -82,12 +87,13 @@ func _ready():
     next_player_unit = _randi(player_team)
     var unit = player_team[next_player_unit]
     for i in range(gui.get_num_action_buttons()):
-        gui.set_action_button(i, next_player_unit, unit.frames, unit.cost)
+        var frames = unit.get_sprite_frames(team_colours[PLAYER_TEAM])
+        gui.set_action_button(i, next_player_unit, frames, unit.cost)
         next_player_unit = _randi(player_team)
         unit = player_team[next_player_unit]
     gui.set_next_role(unit.role)
     gui.set_player_gold(player_coins)
-    gui.ensure_area_selectors(stage.num_spawn_points(Global.Teams.BLUE))
+    gui.ensure_area_selectors(stage.num_spawn_points(PLAYER_TEAM))
     _spawn_heroes()
 
 
@@ -138,6 +144,7 @@ func _spawn_projectile(scene, source, target):
 func _spawn_minion(base_data: MinionData, team: int, spawn: int):
     var minion = SCN_MINION.instance()
     minion.team = team
+    minion.team_colour = team_colours[team]
     minion.base_data = base_data
     minion.connect("spawn_projectile", self, "_on_spawn_projectile")
     stage.spawn_minion(minion, spawn)
@@ -146,14 +153,16 @@ func _spawn_minion(base_data: MinionData, team: int, spawn: int):
 func _spawn_heroes():
     # blue
     var minion = SCN_HERO.instance()
-    minion.team = Global.Teams.BLUE
+    minion.team = PLAYER_TEAM
+    minion.team_colour = team_colours[PLAYER_TEAM]
     minion.base_data = DATA_BLUE_HERO
     minion.connect("spawn_projectile", self, "_on_spawn_projectile")
     stage.spawn_hero(minion)
     _player_hero = weakref(minion)
     # red
     minion = SCN_HERO.instance()
-    minion.team = Global.Teams.RED
+    minion.team = ENEMY_TEAM
+    minion.team_colour = team_colours[ENEMY_TEAM]
     minion.base_data = DATA_RED_HERO
     minion.connect("spawn_projectile", self, "_on_spawn_projectile")
     minion.connect("took_damage", self, "_on_enemy_took_damage")
@@ -171,15 +180,15 @@ func _on_EnemyTimer_timeout():
     var unit = enemy_team[r % len(enemy_team)]
     if unit.cost <= enemy_coins:
         enemy_coins -= unit.cost
-        var team = Global.Teams.RED
-        var spawn = r % stage.num_spawn_points(Global.Teams.RED)
+        var team = ENEMY_TEAM
+        var spawn = r % stage.num_spawn_points(ENEMY_TEAM)
         _spawn_minion(unit, team, spawn)
 
 
 func _on_Stage_objective_captured(team: int):
     if not _playing:
         return
-    if team == Global.Teams.RED:  # player (BLUE) captured enemy (RED)
+    if team == ENEMY_TEAM:  # player captured enemy
         winlabel.text = "Victory"
     else:
         winlabel.text = "Defeat"
@@ -195,7 +204,7 @@ func _on_Stage_objective_captured(team: int):
 func _on_BattleGUI_spawn_minion_requested(_i, unit_type):
     # print("spawn unit requested: ", unit_type)
     _temp_unit_type = unit_type
-    var spawns = stage.get_spawn_points(Global.Teams.BLUE)
+    var spawns = stage.get_spawn_points(PLAYER_TEAM)
     for i in range(len(spawns)):
         gui.set_area_selector(i, spawns[i])
     gui.select_target_area()
@@ -204,16 +213,17 @@ func _on_BattleGUI_spawn_minion_requested(_i, unit_type):
 func _on_BattleGUI_area_selected(i: int, _x: float, _y: float):
     # print("spawn area selected: ", i)
     var unit = player_team[_temp_unit_type]
-    var team = Global.Teams.BLUE
+    var team = PLAYER_TEAM
     var cost = unit.cost
     if cost <= player_coins:
         _spawn_minion(unit, team, i)
         # regenerate next unit
         unit = player_team[next_player_unit]
+        var frames = unit.get_sprite_frames(team_colours[team])
         gui.set_action_button(
             gui.last_action_button,
             next_player_unit,
-            unit.frames,
+            frames,
             unit.cost,
             BUTTON_COOLDOWN
         )

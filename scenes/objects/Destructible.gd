@@ -10,7 +10,7 @@ signal captured()
 # Attributes
 ################################################################################
 
-export (Global.Teams) var team: int = Global.Teams.NONE
+export (int) var team: int = 0
 export (int) var max_health: int = 20
 
 var health: int = max_health

@@ -4,7 +4,7 @@ extends Position2D
 # Variables
 ################################################################################
 
-export (Global.Teams) var team: int = Global.Teams.NONE
+export (int) var team: int = 0
 
 export (NodePath) var waypoint
 
