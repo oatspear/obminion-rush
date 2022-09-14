@@ -32,3 +32,23 @@ export (Global.MagicResistance) var magic_resistance: int = Global.MagicResistan
 
 func get_sprite_frames(team: int) -> SpriteFrames:
     return Global.load_sprite_frames(race, name, team)
+
+
+func read_from_json(path: String) -> void:
+    var json: JSONParseResult = JSON.parse(path)
+    if json.error != OK:
+        push_error(json.error_string)
+    var result = json.result
+    race = int(result["race"])
+    name = result["name"]
+    role = int(result["role"])
+    cost = int(result["cost"])
+    health = int(result["health"])
+    power = int(result["power"])
+    move_speed = int(result["move_speed"])
+    attack_speed = int(result["attack_speed"])
+    attack_range = int(result["attack_range"])
+    projectile = int(result["projectile"])
+    damage_type = int(result["damage_type"])
+    armor_type = int(result["armor_type"])
+    magic_resistance = int(result["magic_resistance"])
