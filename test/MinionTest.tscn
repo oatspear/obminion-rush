@@ -4,8 +4,12 @@
 
 [node name="MinionTest" type="Node2D"]
 script = ExtResource( 1 )
-minion1_name = "GreenArcher"
-minion2_name = "RedMage"
+minion1_race = 1
+minion1_tier = 2
+minion1_name = "Tank"
+minion2_race = 1
+minion2_tier = 3
+minion2_name = "Archer"
 
 [node name="Spawn1" type="Position2D" parent="."]
 position = Vector2( 64, 224 )
