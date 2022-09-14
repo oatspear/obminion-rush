@@ -40,13 +40,13 @@ onready var spawn2: Position2D = $Spawn2
 
 func _ready():
     var data = load(MINION_DATA_PATH % _minion1_params())
-    for i in range(0, num_minion1):
+    for _i in range(0, num_minion1):
         var minion = SCN_MINION.instance()
         minion.team = TEAM1
         minion.team_colour = minion1_colour
         _spawn_minion(minion, data, spawn1, spawn2)
     data = load(MINION_DATA_PATH % _minion2_params())
-    for i in range(0, num_minion2):
+    for _i in range(0, num_minion2):
         var minion = SCN_MINION.instance()
         minion.team = TEAM2
         minion.team_colour = minion2_colour
