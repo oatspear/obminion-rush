@@ -91,11 +91,9 @@ func take_damage(damage: int, typed: int, source: WeakRef):
     var bonus: int = 0
     match typed:
         Global.DamageTypes.PHYSICAL:
-# warning-ignore:integer_division
-            bonus = damage * armor_type / Global.DAMAGE_DIVISOR
+            bonus = Global.calc_armor_bonus(armor_type, damage)
         Global.DamageTypes.MAGIC:
-# warning-ignore:integer_division
-            bonus = damage * magic_resistance / Global.DAMAGE_DIVISOR
+            bonus = Global.calc_magic_resist_bonus(magic_resistance, damage)
         Global.DamageTypes.HERO:
             pass
         _:

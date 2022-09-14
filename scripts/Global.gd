@@ -148,16 +148,34 @@ func calc_attack_speed(tier: int) -> float:
 enum DamageTypes { PHYSICAL, MAGIC, HERO }
 
 enum ArmorTypes {
-    LIGHT = +2,
-    MEDIUM = 0,
-    HEAVY = -2
+    LIGHT = 0,
+    MEDIUM,
+    HEAVY
 }
 
+const ARMOR_BONUSES = [+2, 0, -2]
+
+
+func calc_armor_bonus(tier: int, damage: int) -> int:
+    assert(tier in ArmorTypes.values())
+# warning-ignore:integer_division
+    return damage * ARMOR_BONUSES[tier] / DAMAGE_DIVISOR
+
+
 enum MagicResistance {
-    LIGHT = +2,
-    MEDIUM = 0,
-    HEAVY = -2
+    LIGHT = 0,
+    MEDIUM,
+    HEAVY
 }
+
+const MAGIC_RESIST_BONUSES = [+2, 0, -2]
+
+
+func calc_magic_resist_bonus(tier: int, damage: int) -> int:
+    assert(tier in MagicResistance.values())
+# warning-ignore:integer_division
+    return damage * MAGIC_RESIST_BONUSES[tier] / DAMAGE_DIVISOR
+
 
 const DAMAGE_DIVISOR: int = 5
 
