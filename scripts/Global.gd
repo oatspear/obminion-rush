@@ -105,12 +105,24 @@ enum AttackRanges {
 }
 
 const ATTACK_RANGE_FACTOR: int = 16  # pixels per rank
-const MELEE_ATTACK_RANGE: int = 12  # not quite 16
+# const MELEE_ATTACK_RANGE: int = 12  # not quite 16
 
 func calc_attack_range(tier: int) -> int:
-    if tier <= AttackRanges.MELEE:
-        return MELEE_ATTACK_RANGE
+    assert(tier in AttackRanges.values())
+    # if tier <= AttackRanges.MELEE:
+        # return MELEE_ATTACK_RANGE
     return ATTACK_RANGE_FACTOR * tier
+
+
+func get_melee_range() -> int:
+    return calc_attack_range(AttackRanges.MELEE)
+
+
+const AGGRO_RANGE: int = AttackRanges.CLOSE
+
+
+func get_aggro_range() -> int:
+    return calc_attack_range(AGGRO_RANGE)
 
 ################################################################################
 # Attack Speed
