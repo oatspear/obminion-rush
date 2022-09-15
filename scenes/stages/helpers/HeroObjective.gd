@@ -63,8 +63,15 @@ func _on_hero_died():
     emit_signal("captured")
 
 
-func _on_HeroObjective_body_entered(_body):
-    return
+func _on_HeroObjective_body_entered(body):
+    var this_hero = hero.get_ref()
+    if not this_hero:
+        return
+    if body.team != team:
+        body.cmd_attack_target(this_hero)
+    else:
+        # assist
+        pass
 
 
 func _on_HeroObjective_body_exited(body):
