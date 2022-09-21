@@ -64,11 +64,13 @@ func _on_hero_died():
 
 
 func _on_HeroObjective_body_entered(body):
+    if hero == null:
+        return
     var this_hero = hero.get_ref()
     if not this_hero:
         return
     if body.team != team:
-        body.cmd_attack_target(this_hero)
+        pass # body.cmd_attack_target(this_hero)
     else:
         # assist
         pass

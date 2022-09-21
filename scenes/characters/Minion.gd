@@ -37,7 +37,8 @@ export (Global.ArmorTypes) var armor_type: int = Global.ArmorTypes.LIGHT
 export (Global.MagicResistance) var magic_resistance: int = Global.MagicResistance.LIGHT
 
 export (float) var move_speed = 30.0  # pixels / sec
-var waypoint = null
+var move_waypoint = null
+var attack_waypoint = null
 
 var state: int = FSM.IDLE
 var under_command: bool = false
@@ -62,7 +63,7 @@ func cmd_move_to(point: Vector2) -> bool:
     if state == FSM.DYING:
         return false
     under_command = true
-    waypoint = point
+    move_waypoint = point
     _enter_walk()
     return true
 
@@ -76,7 +77,7 @@ func cmd_attack_target(target) -> bool:
 
 
 func set_waypoint(point: Vector2):
-    waypoint = point
+    move_waypoint = point
 
 
 func is_alive() -> bool:
@@ -248,7 +249,7 @@ func _enter_pursuit(target: Node2D):
         _enter_attack(target)
     else:
         state = FSM.PURSUIT
-        waypoint = target.position
+        attack_waypoint = target.position
         attack_target = weakref(target)
         sprite.animation = Global.ANIM_WALK
         sprite.flip_h = target.position.x < position.x
@@ -260,7 +261,8 @@ func _enter_dying():
     health = 0
     power = 0
     move_speed = 0
-    waypoint = null
+    move_waypoint = null
+    attack_waypoint = null
     attack_target = null
     under_command = false
     velocity = Vector2.ZERO
@@ -296,7 +298,7 @@ func _process_idle(delta):
     if target != null:
         _enter_attack(target)
         return _process_attack(delta)
-    if waypoint != null:
+    if move_waypoint != null:
         _enter_walk()
 
 
@@ -334,29 +336,33 @@ func _process_cooldown(delta: float):
 
 
 func _physics_process_walk(_delta):
-    if waypoint == null:
+    if move_waypoint == null:
         return
-    velocity = _aim(waypoint)
-    if velocity == Vector2.ZERO:
-        waypoint = null
+    var moved = _physics_move_to(move_waypoint)
+    if not moved:
         _enter_idle()
-        return
-    sprite.flip_h = velocity.x < 0
-    velocity *= move_speed
-    velocity = move_and_slide(velocity)
 
 
-func _physics_process_pursuit(delta):
+func _physics_process_pursuit(_delta):
     assert(attack_target != null)
     var target = attack_target.get_ref()
     if not target:
         _enter_idle()
         return
-    waypoint = target.position
-    _physics_process_walk(delta)
-    if velocity.length_squared() < 1:
+    attack_waypoint = target.position
+    var moved = _physics_move_to(attack_waypoint)
+    if not moved or velocity.length_squared() < 1:
         _enter_idle()
 
+
+func _physics_move_to(waypoint: Vector2) -> bool:
+    velocity = _aim(waypoint)
+    if velocity == Vector2.ZERO:
+        return false
+    sprite.flip_h = velocity.x < 0
+    velocity *= move_speed
+    velocity = move_and_slide(velocity)
+    return true
 
 func _aim(target: Vector2) -> Vector2:
     if position.distance_squared_to(target) < 4:
