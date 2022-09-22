@@ -52,8 +52,8 @@ var velocity: Vector2 = Vector2.ZERO
 var leash: Vector2 = Vector2.ZERO
 
 onready var sprite: AnimatedSprite = $Sprite
-onready var sight_area: Area2D = $Sight
-onready var sight_radius: CollisionShape2D = $Sight/Area
+onready var range_area: Area2D = $Range
+onready var range_radius: CollisionShape2D = $Range/Area
 onready var health_bar = $HealthBar
 
 
@@ -183,7 +183,7 @@ func _on_Sprite_animation_finished():
 func _ready():
     collision_layer = Global.get_collision_layer(team)
     collision_mask = Global.get_collision_mask(team)
-    sight_area.collision_mask = Global.get_collision_mask_teams(team)
+    range_area.collision_mask = Global.get_collision_mask_teams(team)
     _init_from_data(base_data)
     health = max_health
     health_bar.set_value(health, max_health)
@@ -307,7 +307,7 @@ func _process_cooldown(delta: float):
     delta = -timer
     timer = 0
     var target = attack_target.get_ref()
-    # if target and sight_area.overlaps_body(target):
+    # if target and range_area.overlaps_body(target):
     if target and position.distance_to(target.position) <= attack_range:
         _enter_attack(target)
         _process_attack(delta)
@@ -324,7 +324,7 @@ func _process_cooldown(delta: float):
 func _enter_pursuit(target: Node2D):
     # print(name, "  --> PURSUIT")
     assert(target.team != team)
-    # if sight_area.overlaps_body(target):
+    # if range_area.overlaps_body(target):
     if position.distance_to(target.position) <= attack_range:
         _enter_attack(target)
     else:
@@ -395,7 +395,7 @@ func _init_from_data(data: MinionData):
     attack_speed = Global.calc_attack_speed(data.attack_speed)
     #attack_range = Global.calc_attack_range(data.attack_range)
     attack_range = data.attack_range
-    sight_radius.shape.radius = Global.AGGRO_RANGE
+    range_radius.shape.radius = Global.AGGRO_RANGE
     projectile = data.projectile
     damage_type = data.damage_type
     armor_type = data.armor_type
@@ -441,7 +441,7 @@ func _aim2(target: Vector2) -> Vector2:
 
 
 func _check_for_enemies():
-    for target in sight_area.get_overlapping_bodies():
+    for target in range_area.get_overlapping_bodies():
         if target == self or target.team == team or not target.is_alive():
             continue
         return target
