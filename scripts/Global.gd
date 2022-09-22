@@ -75,21 +75,16 @@ func calc_health(tier: int) -> int:
 # Movement Speed
 ################################################################################
 
-enum MovementSpeeds {
-    SLOWEST = 1,
-    VERY_SLOW,
-    SLOW,
-    MEDIUM,
-    FAST,
-    VERY_FAST,
-    FASTEST
-}
-
-const MOVE_SPEED_FACTOR: int = 4  # pixels per rank
 const BASE_MOVE_SPEED: int = 8
+const MOVE_SPEED_BONUS: int = 4
 
-func calc_move_speed(tier: int):
-    return BASE_MOVE_SPEED + MOVE_SPEED_FACTOR * tier
+enum MovementSpeeds {
+    SLOWEST = BASE_MOVE_SPEED,
+    SLOW = BASE_MOVE_SPEED + MOVE_SPEED_BONUS,
+    MEDIUM = BASE_MOVE_SPEED + 2 * MOVE_SPEED_BONUS,
+    FAST = BASE_MOVE_SPEED + 3 * MOVE_SPEED_BONUS,
+    FASTEST = BASE_MOVE_SPEED + 4 * MOVE_SPEED_BONUS
+}
 
 ################################################################################
 # Attack Range

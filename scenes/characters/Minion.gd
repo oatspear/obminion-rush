@@ -391,11 +391,12 @@ func _init_from_data(data: MinionData):
     cost = data.cost
     max_health = Global.calc_health(data.health)
     power = Global.calc_power(data.power)
-    move_speed = Global.calc_move_speed(data.move_speed)
+    # move_speed = Global.calc_move_speed(data.move_speed)
+    move_speed = data.move_speed
     attack_speed = Global.calc_attack_speed(data.attack_speed)
     #attack_range = Global.calc_attack_range(data.attack_range)
     attack_range = data.attack_range
-    range_radius.shape.radius = Global.AGGRO_RANGE
+    range_radius.shape.radius = max(Global.AGGRO_RANGE, attack_range)
     projectile = data.projectile
     damage_type = data.damage_type
     armor_type = data.armor_type
