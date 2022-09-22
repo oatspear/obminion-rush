@@ -21,16 +21,16 @@ playing = true
 [node name="Shape" type="CollisionShape2D" parent="."]
 shape = SubResource( 1 )
 
-[node name="Range" type="Area2D" parent="."]
+[node name="Sight" type="Area2D" parent="."]
 collision_layer = 32
 collision_mask = 30
 
-[node name="Area" type="CollisionShape2D" parent="Range"]
+[node name="Area" type="CollisionShape2D" parent="Sight"]
 shape = SubResource( 2 )
 
 [node name="HealthBar" parent="." instance=ExtResource( 2 )]
 position = Vector2( 0, -16 )
 
 [connection signal="animation_finished" from="Sprite" to="." method="_on_Sprite_animation_finished"]
-[connection signal="body_entered" from="Range" to="." method="_on_Range_body_entered"]
-[connection signal="body_exited" from="Range" to="." method="_on_Range_body_exited"]
+[connection signal="body_entered" from="Sight" to="." method="_on_Range_body_entered"]
+[connection signal="body_exited" from="Sight" to="." method="_on_Range_body_exited"]

@@ -28,6 +28,7 @@ export (int) var team: int = 0
 export (Global.TeamColours) var team_colour: int = Global.TeamColours.NONE
 export (int) var max_health: int = 20
 export (int) var power: int = 2
+export (float) var attack_range: float = 1.0
 export (float) var attack_speed: float = 1.0  # sec
 export (Global.Projectiles) var projectile: int = Global.Projectiles.NONE
 export (bool) var follows_lane: bool = true
@@ -48,10 +49,11 @@ var attack_target: WeakRef = null
 
 var timer: float = 0.0
 var velocity: Vector2 = Vector2.ZERO
+var leash: Vector2 = Vector2.ZERO
 
 onready var sprite: AnimatedSprite = $Sprite
-onready var range_area: Area2D = $Range
-onready var range_radius: CollisionShape2D = $Range/Area
+onready var sight_area: Area2D = $Sight
+onready var sight_radius: CollisionShape2D = $Sight/Area
 onready var health_bar = $HealthBar
 
 
@@ -145,11 +147,13 @@ func _on_Range_body_entered(body):
         return
     if under_command:
         return
-    if state == FSM.PURSUIT:
-        assert(attack_target != null)
-        if body != attack_target.get_ref():
-            return
-    _enter_attack(body)
+    #if state == FSM.PURSUIT:
+    #    assert(attack_target != null)
+    #    if body != attack_target.get_ref():
+    #        return
+    #_enter_attack(body)
+    if state != FSM.PURSUIT:
+        _enter_pursuit(body)
 
 
 func _on_Range_body_exited(body):
@@ -179,7 +183,7 @@ func _on_Sprite_animation_finished():
 func _ready():
     collision_layer = Global.get_collision_layer(team)
     collision_mask = Global.get_collision_mask(team)
-    range_area.collision_mask = Global.get_collision_mask_teams(team)
+    sight_area.collision_mask = Global.get_collision_mask_teams(team)
     _init_from_data(base_data)
     health = max_health
     health_bar.set_value(health, max_health)
@@ -210,6 +214,11 @@ func _physics_process(delta: float):
             pass
 
 
+################################################################################
+# Idle State
+################################################################################
+
+
 func _enter_idle():
     # print(name, " --> IDLE")
     state = FSM.IDLE
@@ -218,11 +227,44 @@ func _enter_idle():
     under_command = false
 
 
+func _process_idle(delta):
+#    timer -= delta
+#    if timer > 0:
+#        return
+#    delta = -timer
+#    timer = 0
+    var target = _check_for_enemies()
+    if target != null:
+        # _enter_attack(target)
+        # return _process_attack(delta)
+        return _enter_pursuit(target)
+    if move_waypoint != null:
+        _enter_walk()
+
+
+################################################################################
+# Walking State
+################################################################################
+
+
 func _enter_walk():
     # print(name, " --> WALK")
     state = FSM.WALK
     sprite.animation = Global.ANIM_WALK
     attack_target = null
+
+
+func _physics_process_walk(_delta):
+    if move_waypoint == null:
+        return
+    var moved = _physics_move_to(move_waypoint)
+    if not moved:
+        _enter_idle()
+
+
+################################################################################
+# Attack State
+################################################################################
 
 
 func _enter_attack(target: Node2D):
@@ -236,23 +278,93 @@ func _enter_attack(target: Node2D):
     timer = attack_speed
 
 
+func _process_attack(delta: float):
+    assert(timer > 0)
+    timer -= delta
+    if timer <= 0:
+        timer = 0
+        # ready to attack
+        delta = -timer
+        _enter_cooldown()
+        _process_cooldown(delta)
+
+
+################################################################################
+# Cooldown State
+################################################################################
+
+
 func _enter_cooldown():
     # print(name, " --> COOLDOWN")
     state = FSM.COOLDOWN
     sprite.animation = Global.ANIM_IDLE
 
 
+func _process_cooldown(delta: float):
+    timer -= delta
+    if timer > 0:
+        return
+    delta = -timer
+    timer = 0
+    var target = attack_target.get_ref()
+    # if target and sight_area.overlaps_body(target):
+    if target and position.distance_to(target.position) <= attack_range:
+        _enter_attack(target)
+        _process_attack(delta)
+    else:
+        _enter_idle()
+        _process_idle(delta)
+
+
+################################################################################
+# Pursuit State
+################################################################################
+
+
 func _enter_pursuit(target: Node2D):
     # print(name, "  --> PURSUIT")
     assert(target.team != team)
-    if range_area.overlaps_body(target):
+    # if sight_area.overlaps_body(target):
+    if position.distance_to(target.position) <= attack_range:
         _enter_attack(target)
     else:
         state = FSM.PURSUIT
+        leash.x = position.x
+        leash.y = position.y
         attack_waypoint = target.position
         attack_target = weakref(target)
         sprite.animation = Global.ANIM_WALK
         sprite.flip_h = target.position.x < position.x
+
+
+func _process_pursuit(delta: float):
+    assert(attack_target != null)
+    var target = attack_target.get_ref()
+    if not target:
+        _enter_idle()
+        _process_idle(delta)
+    elif position.distance_to(target.position) <= attack_range:
+        _enter_attack(target)
+        _process_attack(delta)
+    elif position.distance_to(leash) >= Global.AGGRO_RANGE:
+        cmd_move_to(leash)
+
+
+func _physics_process_pursuit(_delta):
+    assert(attack_target != null)
+    var target = attack_target.get_ref()
+    if not target:
+        _enter_idle()
+        return
+    attack_waypoint = target.position
+    var moved = _physics_move_to(attack_waypoint)
+    if not moved or velocity.length_squared() < 1:
+        _enter_idle()
+
+
+################################################################################
+# Dying State
+################################################################################
 
 
 func _enter_dying():
@@ -281,78 +393,13 @@ func _init_from_data(data: MinionData):
     power = Global.calc_power(data.power)
     move_speed = Global.calc_move_speed(data.move_speed)
     attack_speed = Global.calc_attack_speed(data.attack_speed)
-    range_radius.shape.radius = Global.calc_attack_range(data.attack_range)
+    #attack_range = Global.calc_attack_range(data.attack_range)
+    attack_range = data.attack_range
+    sight_radius.shape.radius = Global.AGGRO_RANGE
     projectile = data.projectile
     damage_type = data.damage_type
     armor_type = data.armor_type
     magic_resistance = data.magic_resistance
-
-
-func _process_idle(delta):
-#    timer -= delta
-#    if timer > 0:
-#        return
-#    delta = -timer
-#    timer = 0
-    var target = _check_for_enemies()
-    if target != null:
-        _enter_attack(target)
-        return _process_attack(delta)
-    if move_waypoint != null:
-        _enter_walk()
-
-
-func _process_pursuit(_delta):
-    assert(attack_target != null)
-    var target = attack_target.get_ref()
-    if not target:
-        _enter_idle()
-
-
-func _process_attack(delta: float):
-    assert(timer > 0)
-    timer -= delta
-    if timer <= 0:
-        timer = 0
-        # ready to attack
-        delta = -timer
-        _enter_cooldown()
-        _process_cooldown(delta)
-
-
-func _process_cooldown(delta: float):
-    timer -= delta
-    if timer > 0:
-        return
-    delta = -timer
-    timer = 0
-    var target = attack_target.get_ref()
-    if target and range_area.overlaps_body(target):
-        _enter_attack(target)
-        _process_attack(delta)
-    else:
-        _enter_idle()
-        _process_idle(delta)
-
-
-func _physics_process_walk(_delta):
-    if move_waypoint == null:
-        return
-    var moved = _physics_move_to(move_waypoint)
-    if not moved:
-        _enter_idle()
-
-
-func _physics_process_pursuit(_delta):
-    assert(attack_target != null)
-    var target = attack_target.get_ref()
-    if not target:
-        _enter_idle()
-        return
-    attack_waypoint = target.position
-    var moved = _physics_move_to(attack_waypoint)
-    if not moved or velocity.length_squared() < 1:
-        _enter_idle()
 
 
 func _physics_move_to(waypoint: Vector2) -> bool:
@@ -364,10 +411,12 @@ func _physics_move_to(waypoint: Vector2) -> bool:
     velocity = move_and_slide(velocity)
     return true
 
+
 func _aim(target: Vector2) -> Vector2:
     if position.distance_squared_to(target) < 4:
         return Vector2.ZERO
     return (target - position).normalized()
+
 
 func _aim2(target: Vector2) -> Vector2:
     var dx = target.x - position.x
@@ -392,7 +441,7 @@ func _aim2(target: Vector2) -> Vector2:
 
 
 func _check_for_enemies():
-    for target in range_area.get_overlapping_bodies():
+    for target in sight_area.get_overlapping_bodies():
         if target == self or target.team == team or not target.is_alive():
             continue
         return target

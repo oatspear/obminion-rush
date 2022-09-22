@@ -96,10 +96,10 @@ func calc_move_speed(tier: int):
 ################################################################################
 
 enum AttackRanges {
-    MELEE = 0,
-    SHORT,
-    MEDIUM,
-    LONG
+    MELEE = MINION_SIZE + 2,
+    SHORT = MINION_SIZE * 2,
+    MEDIUM = MINION_SIZE * 3,
+    LONG = MINION_SIZE * 4
 }
 
 const ATTACK_RANGE_FACTOR: int = 8  # pixels per rank
