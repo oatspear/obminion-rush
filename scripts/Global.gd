@@ -1,5 +1,7 @@
 extends Node
 
+const MINION_SIZE = 16
+
 ################################################################################
 # Directions
 ################################################################################
@@ -94,35 +96,27 @@ func calc_move_speed(tier: int):
 ################################################################################
 
 enum AttackRanges {
-    MELEE = 1,
-    CLOSE,
+    MELEE = 0,
     SHORT,
     MEDIUM,
-    LONG,
-    FAR,
-    VERY_FAR,
-    MAXIMUM
+    LONG
 }
 
-const ATTACK_RANGE_FACTOR: int = 16  # pixels per rank
-# const MELEE_ATTACK_RANGE: int = 12  # not quite 16
+const ATTACK_RANGE_FACTOR: int = 8  # pixels per rank
+const MELEE_ATTACK_RANGE: int = 2  # small margin over two colliding bodies
 
 func calc_attack_range(tier: int) -> int:
     assert(tier in AttackRanges.values())
-    # if tier <= AttackRanges.MELEE:
-        # return MELEE_ATTACK_RANGE
-    return ATTACK_RANGE_FACTOR * tier
+    if tier <= AttackRanges.MELEE:
+        return MINION_SIZE + MELEE_ATTACK_RANGE
+    return 2 * MINION_SIZE + ATTACK_RANGE_FACTOR * (tier - 1)
 
 
 func get_melee_range() -> int:
     return calc_attack_range(AttackRanges.MELEE)
 
 
-const AGGRO_RANGE: int = AttackRanges.CLOSE
-
-
-func get_aggro_range() -> int:
-    return calc_attack_range(AGGRO_RANGE)
+const AGGRO_RANGE: int = 3 * MINION_SIZE
 
 ################################################################################
 # Attack Speed
