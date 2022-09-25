@@ -58,6 +58,10 @@ func _on_Aura_body_entered(target):
             target.health_regen_effects += 1
         Global.Abilities.AURA_LIFESTEAL_MELEE:
             target.melee_lifesteal_effects += 1
+        Global.Abilities.AURA_ATTACK_SPEED_BUFF:
+            target.attack_speed_bonuses += 1
+        Global.Abilities.AURA_MOVE_SPEED_BUFF:
+            target.move_speed_bonuses += 1
 
 
 func _on_Aura_body_exited(target):
@@ -80,3 +84,7 @@ func _on_Aura_body_exited(target):
             target.health_regen_effects -= 1
         Global.Abilities.AURA_LIFESTEAL_MELEE:
             target.melee_lifesteal_effects -= 1
+        Global.Abilities.AURA_ATTACK_SPEED_BUFF:
+            target.attack_speed_bonuses -= 1
+        Global.Abilities.AURA_MOVE_SPEED_BUFF:
+            target.move_speed_bonuses -= 1

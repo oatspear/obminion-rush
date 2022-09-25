@@ -86,6 +86,7 @@ enum MovementSpeeds {
     FASTEST = BASE_MOVE_SPEED + 4 * MOVE_SPEED_BONUS
 }
 
+
 ################################################################################
 # Attack Range
 ################################################################################
@@ -141,6 +142,11 @@ const ATTACK_SPEED_TABLE: Array = [
 func calc_attack_speed(tier: int) -> float:
     # just look up; formula is approximate
     return ATTACK_SPEED_TABLE[tier]
+
+
+func calc_attack_speed_bonus(speed: float) -> float:
+    return max(MIN_ATTACK_SPEED, speed * 0.9)
+
 
 ################################################################################
 # Weapons and Armor
@@ -206,13 +212,17 @@ enum Abilities {
     AURA_HEALTH_REGENERATION,
     # lifesteal
     AURA_LIFESTEAL_MELEE,
+    # increase ally movement speed
+    AURA_MOVE_SPEED_BUFF,
+    # increase ally attack speed
+    AURA_ATTACK_SPEED_BUFF,
 }
 
 
 func calc_lifesteal_health(damage: int) -> int:
-    # 10% lifesteal
+    # 20% lifesteal
 # warning-ignore:integer_division
-    return max(1, damage / 10) as int
+    return damage / DAMAGE_DIVISOR
 
 
 const PASSIVE_HEALTH_REGEN: int = 2  # HP/s

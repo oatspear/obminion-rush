@@ -56,6 +56,8 @@ var armor_bonuses: int = 0
 var magic_resist_bonuses: int = 0
 var health_regen_effects: int = 0
 var melee_lifesteal_effects: int = 0
+var attack_speed_bonuses: int = 0
+var move_speed_bonuses: int = 0
 
 var timer: float = 0.0
 var tick_timer: float = 0.0
@@ -307,6 +309,8 @@ func _enter_attack(target: Node2D):
     sprite.animation = Global.ANIM_ATTACK
     sprite.flip_h = target.position.x < position.x
     timer = attack_speed
+    if attack_speed_bonuses > 0:
+        timer = Global.calc_attack_speed_bonus(attack_speed)
 
 
 func _process_attack(delta: float):
@@ -446,7 +450,10 @@ func _physics_move_to(waypoint: Vector2) -> bool:
     if velocity == Vector2.ZERO:
         return false
     sprite.flip_h = velocity.x < 0
-    velocity *= move_speed
+    var s = move_speed
+    if move_speed_bonuses > 0:
+        s += Global.MOVE_SPEED_BONUS
+    velocity *= s
     velocity = move_and_slide(velocity)
     return true
 
