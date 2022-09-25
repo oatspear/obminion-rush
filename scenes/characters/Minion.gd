@@ -17,6 +17,7 @@ enum FSM { IDLE, WALK, ATTACK, COOLDOWN, PURSUIT, DYING }
 
 signal spawn_projectile(projectile, source, target)
 signal took_damage(amount)
+signal healed_damage(amount)
 signal died()
 
 
@@ -51,8 +52,13 @@ var attack_target: WeakRef = null
 
 var physical_damage_bonuses: int = 0
 var magic_damage_bonuses: int = 0
+var armor_bonuses: int = 0
+var magic_resist_bonuses: int = 0
+var health_regen_effects: int = 0
+var melee_lifesteal_effects: int = 0
 
 var timer: float = 0.0
+var tick_timer: float = 0.0
 var velocity: Vector2 = Vector2.ZERO
 var leash: Vector2 = Vector2.ZERO
 
@@ -96,37 +102,43 @@ func is_idle() -> bool:
     return state == FSM.IDLE
 
 
-func take_damage(damage: int, typed: int, source: WeakRef):
+func take_damage(damage: int, typed: int, source: WeakRef) -> int:
     var bonus: int = 0
     match typed:
         Global.DamageTypes.PHYSICAL:
             bonus = Global.calc_armor_bonus(armor_type, damage)
+            if armor_bonuses > 0:
+                bonus -= Global.calc_aura_damage_bonus(damage)
         Global.DamageTypes.MAGIC:
             bonus = Global.calc_magic_resist_bonus(magic_resistance, damage)
+            if magic_resist_bonuses > 0:
+                bonus -= Global.calc_aura_damage_bonus(damage)
         Global.DamageTypes.HERO:
             pass
         _:
             assert(false, 'unexpected damage type')
     damage += bonus
+    damage = max(1, damage) as int
     return take_final_damage(damage, typed, source)
 
 
-func take_physical_damage(damage: int, source: WeakRef):
+func take_physical_damage(damage: int, source: WeakRef) -> int:
     return take_damage(damage, Global.DamageTypes.PHYSICAL, source)
 
 
-func take_magic_damage(damage: int, source: WeakRef):
+func take_magic_damage(damage: int, source: WeakRef) -> int:
     return take_damage(damage, Global.DamageTypes.MAGIC, source)
 
 
-func take_final_damage(damage: int, typed: int, _source: WeakRef):
+func take_final_damage(damage: int, typed: int, _source: WeakRef) -> int:
     if state == FSM.DYING:
-        return
+        return 0
     health -= damage
+    emit_signal("took_damage", damage, typed)
     if health <= 0:
         _enter_dying()
     health_bar.set_value(health, max_health)
-    emit_signal("took_damage", damage, typed)
+    return damage
 
 
 func do_attack():
@@ -136,9 +148,21 @@ func do_attack():
         return
     if projectile == Global.Projectiles.NONE:
         var damage = _calc_damage_output()
-        target.take_damage(damage, damage_type, weakref(self))
+        damage = target.take_damage(damage, damage_type, weakref(self))
+        if melee_lifesteal_effects > 0:
+            damage = Global.calc_lifesteal_health(damage)
+            heal(damage)
     else:
         emit_signal("spawn_projectile", projectile, self, target)
+
+
+func heal(damage: int):
+    if health < max_health:
+        health += damage
+        if health > max_health:
+            health = max_health
+        emit_signal("healed_damage", damage)
+        print("Healed %d health" % damage)
 
 
 ################################################################################
@@ -207,6 +231,8 @@ func _process(delta: float):
             _process_cooldown(delta)
         _:
             pass
+    if state != FSM.DYING:
+        _process_ticks(delta)
 
 
 func _physics_process(delta: float):
@@ -476,3 +502,11 @@ func _calc_damage_output() -> int:
             damage -= Global.calc_aura_damage_bonus(damage)
             damage = max(1, damage)
     return damage
+
+
+func _process_ticks(delta: float):
+    tick_timer += delta
+    while tick_timer >= 1.0:
+        tick_timer -= 1.0
+        if health_regen_effects > 0:
+            heal(Global.PASSIVE_HEALTH_REGEN)

@@ -194,13 +194,28 @@ enum Projectiles { NONE, ARROW, FIRE }
 
 enum Abilities {
     NONE,
-    AURA_FRIEND_ALL_DAMAGE_BUFF,
-    AURA_FRIEND_PHYSICAL_DAMAGE_BUFF,
-    AURA_FRIEND_MAGIC_DAMAGE_BUFF,
-    AURA_ENEMY_ALL_DAMAGE_DEBUFF,
-    AURA_ENEMY_PHYSICAL_DAMAGE_DEBUFF,
-    AURA_ENEMY_MAGIC_DAMAGE_DEBUFF
+    # increase ally power
+    AURA_ALL_DAMAGE_BUFF,
+    AURA_PHYSICAL_DAMAGE_BUFF,
+    AURA_MAGIC_DAMAGE_BUFF,
+    # decrease enemy power
+    AURA_DEFENSES_BUFF,
+    AURA_ARMOR_BUFF,
+    AURA_MAGIC_RESIST_BUFF,
+    # healing over time
+    AURA_HEALTH_REGENERATION,
+    # lifesteal
+    AURA_LIFESTEAL_MELEE,
 }
+
+
+func calc_lifesteal_health(damage: int) -> int:
+    # 10% lifesteal
+# warning-ignore:integer_division
+    return max(1, damage / 10) as int
+
+
+const PASSIVE_HEALTH_REGEN: int = 2  # HP/s
 
 
 ################################################################################
