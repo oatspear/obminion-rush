@@ -146,6 +146,8 @@ func calc_attack_speed(tier: int) -> float:
 # Weapons and Armor
 ################################################################################
 
+const DAMAGE_DIVISOR: int = 5
+
 enum DamageTypes { PHYSICAL, MAGIC, HERO }
 
 enum ArmorTypes {
@@ -178,9 +180,28 @@ func calc_magic_resist_bonus(tier: int, damage: int) -> int:
     return damage * MAGIC_RESIST_BONUSES[tier] / DAMAGE_DIVISOR
 
 
-const DAMAGE_DIVISOR: int = 5
+func calc_aura_damage_bonus(damage: int) -> int:
+# warning-ignore:integer_division
+    return damage / DAMAGE_DIVISOR
+
 
 enum Projectiles { NONE, ARROW, FIRE }
+
+
+################################################################################
+# Abilities
+################################################################################
+
+enum Abilities {
+    NONE,
+    AURA_FRIEND_ALL_DAMAGE_BUFF,
+    AURA_FRIEND_PHYSICAL_DAMAGE_BUFF,
+    AURA_FRIEND_MAGIC_DAMAGE_BUFF,
+    AURA_ENEMY_ALL_DAMAGE_DEBUFF,
+    AURA_ENEMY_PHYSICAL_DAMAGE_DEBUFF,
+    AURA_ENEMY_MAGIC_DAMAGE_DEBUFF
+}
+
 
 ################################################################################
 # Graphics and Animations
@@ -232,6 +253,19 @@ enum TeamColours {
     GREEN,
     YELLOW
 }
+
+
+func get_team_colour(team_colour: int):
+    match team_colour:
+        TeamColours.RED:
+            return Color(1.0, 0.125, 0.125, 0.5)
+        TeamColours.BLUE:
+            return Color(0.125, 0.125, 1.0, 0.5)
+        TeamColours.GREEN:
+            return Color(0.125, 1.0, 0.125, 0.5)
+        TeamColours.YELLOW:
+            return Color(1.0, 1.0, 0.125, 0.5)
+
 
 const TEAM_STRINGS: Array = [
     "Black",

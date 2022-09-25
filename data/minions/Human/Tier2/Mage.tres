@@ -17,3 +17,4 @@ projectile = 2
 damage_type = 1
 armor_type = 0
 magic_resistance = 0
+ability = 0

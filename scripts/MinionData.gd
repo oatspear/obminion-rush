@@ -24,6 +24,8 @@ export (Global.DamageTypes) var damage_type: int = Global.DamageTypes.PHYSICAL
 export (Global.ArmorTypes) var armor_type: int = Global.ArmorTypes.LIGHT
 export (Global.MagicResistance) var magic_resistance: int = Global.MagicResistance.LIGHT
 
+export (Global.Abilities) var ability: int = Global.Abilities.NONE
+
 
 ################################################################################
 # Interface

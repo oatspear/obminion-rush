@@ -4,6 +4,8 @@ extends KinematicBody2D
 # Constants
 ################################################################################
 
+const SCN_AURA = preload("res://scenes/skills/Aura.tscn")
+
 const EPSILON = 1.0
 
 enum FSM { IDLE, WALK, ATTACK, COOLDOWN, PURSUIT, DYING }
@@ -47,6 +49,9 @@ var under_command: bool = false
 var health: int = max_health
 var attack_target: WeakRef = null
 
+var physical_damage_bonuses: int = 0
+var magic_damage_bonuses: int = 0
+
 var timer: float = 0.0
 var velocity: Vector2 = Vector2.ZERO
 var leash: Vector2 = Vector2.ZERO
@@ -55,6 +60,7 @@ onready var sprite: AnimatedSprite = $Sprite
 onready var range_area: Area2D = $Range
 onready var range_radius: CollisionShape2D = $Range/Area
 onready var health_bar = $HealthBar
+onready var auras_node = $Auras
 
 
 ################################################################################
@@ -129,10 +135,9 @@ func do_attack():
     if not target:
         return
     if projectile == Global.Projectiles.NONE:
-        # print(name, " punches ", target.name)
-        target.take_damage(power, damage_type, weakref(self))
+        var damage = _calc_damage_output()
+        target.take_damage(damage, damage_type, weakref(self))
     else:
-        # print(name, " sends a projectile towards ", target.name)
         emit_signal("spawn_projectile", projectile, self, target)
 
 
@@ -402,6 +407,13 @@ func _init_from_data(data: MinionData):
     armor_type = data.armor_type
     magic_resistance = data.magic_resistance
 
+    if data.ability != Global.Abilities.NONE:
+        var aura = SCN_AURA.instance()
+        aura.ability = data.ability
+        aura.set_team(team)
+        aura.team_colour = team_colour
+        auras_node.add_child(aura)
+
 
 func _physics_move_to(waypoint: Vector2) -> bool:
     velocity = _aim(waypoint)
@@ -447,3 +459,20 @@ func _check_for_enemies():
             continue
         return target
     return null
+
+
+func _calc_damage_output() -> int:
+    var damage = power
+    if damage_type == Global.DamageTypes.PHYSICAL:
+        if physical_damage_bonuses > 0:
+            damage += Global.calc_aura_damage_bonus(damage)
+        elif physical_damage_bonuses < 0:
+            damage -= Global.calc_aura_damage_bonus(damage)
+            damage = max(1, damage)
+    elif damage_type == Global.DamageTypes.MAGIC:
+        if magic_damage_bonuses > 0:
+            damage += Global.calc_aura_damage_bonus(damage)
+        elif magic_damage_bonuses < 0:
+            damage -= Global.calc_aura_damage_bonus(damage)
+            damage = max(1, damage)
+    return damage

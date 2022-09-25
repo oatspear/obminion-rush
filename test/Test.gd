@@ -137,7 +137,7 @@ func _spawn_projectile(scene, source, target):
     obj.source = weakref(source)
     obj.position = source.position
     obj.target = target.position
-    obj.power = source.power
+    obj.power = source._calc_damage_output()
     stage.spawn_object(obj)
 
 

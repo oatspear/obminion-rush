@@ -14,6 +14,9 @@ collision_mask = 31
 script = ExtResource( 1 )
 move_speed = 15.0
 
+[node name="Auras" type="Node2D" parent="."]
+position = Vector2( 0, 2 )
+
 [node name="Sprite" type="AnimatedSprite" parent="."]
 position = Vector2( 0, -4 )
 playing = true

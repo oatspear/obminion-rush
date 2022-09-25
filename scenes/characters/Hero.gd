@@ -27,12 +27,4 @@ func take_final_damage(damage: int, typed: int, source: WeakRef):
 
 func _ready():
     var aura = $Aura
-    match team_colour:
-        Global.TeamColours.RED:
-            aura.modulate = Color(1.0, 0.125, 0.125, 0.5)
-        Global.TeamColours.BLUE:
-            aura.modulate = Color(0.125, 0.125, 1.0, 0.5)
-        Global.TeamColours.GREEN:
-            aura.modulate = Color(0.125, 1.0, 0.125, 0.5)
-        Global.TeamColours.YELLOW:
-            aura.modulate = Color(1.0, 1.0, 0.125, 0.5)
+    aura.modulate = Global.get_team_colour(team_colour)
