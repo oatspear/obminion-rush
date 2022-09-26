@@ -35,7 +35,7 @@ func do_effect():
     if collision_target != null:
         var t = collision_target.get_ref()
         if t:
-            t.take_damage(power, damage_type, source)
+            t.take_attack(power, damage_type, source)
 
 
 ################################################################################

@@ -59,6 +59,8 @@ var melee_lifesteal_effects: int = 0
 var attack_speed_bonuses: int = 0
 var move_speed_bonuses: int = 0
 
+var dodge_chance: float = 0.0
+
 var timer: float = 0.0
 var tick_timer: float = 0.0
 var velocity: Vector2 = Vector2.ZERO
@@ -102,6 +104,13 @@ func is_alive() -> bool:
 
 func is_idle() -> bool:
     return state == FSM.IDLE
+
+
+func take_attack(damage: int, typed: int, source: WeakRef) -> int:
+    if dodge_chance > 0.0:
+        if randf() < dodge_chance:
+            return 0
+    return take_damage(damage, typed, source)
 
 
 func take_damage(damage: int, typed: int, source: WeakRef) -> int:
@@ -150,7 +159,7 @@ func do_attack():
         return
     if projectile == Global.Projectiles.NONE:
         var damage = _calc_damage_output()
-        damage = target.take_damage(damage, damage_type, weakref(self))
+        damage = target.take_attack(damage, damage_type, weakref(self))
         if melee_lifesteal_effects > 0:
             damage = Global.calc_lifesteal_health(damage)
             heal(damage)
@@ -260,7 +269,7 @@ func _enter_idle():
     under_command = false
 
 
-func _process_idle(delta):
+func _process_idle(_delta):
 #    timer -= delta
 #    if timer > 0:
 #        return
@@ -382,7 +391,7 @@ func _process_pursuit(delta: float):
         _enter_attack(target)
         _process_attack(delta)
     elif position.distance_to(leash) >= Global.AGGRO_RANGE:
-        cmd_move_to(leash)
+        var _discard = cmd_move_to(leash)
 
 
 func _physics_process_pursuit(_delta):
@@ -437,12 +446,14 @@ func _init_from_data(data: MinionData):
     armor_type = data.armor_type
     magic_resistance = data.magic_resistance
 
-    if data.ability != Global.Abilities.NONE:
+    if data.ability > Global.Abilities.AURAS_START and data.ability < Global.Abilities.AURAS_END:
         var aura = SCN_AURA.instance()
         aura.ability = data.ability
         aura.set_team(team)
         aura.team_colour = team_colour
         auras_node.add_child(aura)
+    elif data.ability == Global.Abilities.EVASION:
+        dodge_chance = Global.EVASION_DODGE_CHANCE
 
 
 func _physics_move_to(waypoint: Vector2) -> bool:

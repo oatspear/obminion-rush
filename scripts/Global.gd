@@ -200,6 +200,7 @@ enum Projectiles { NONE, ARROW, FIRE }
 
 enum Abilities {
     NONE,
+    AURAS_START,
     # increase ally power
     AURA_ALL_DAMAGE_BUFF,
     AURA_PHYSICAL_DAMAGE_BUFF,
@@ -216,6 +217,9 @@ enum Abilities {
     AURA_MOVE_SPEED_BUFF,
     # increase ally attack speed
     AURA_ATTACK_SPEED_BUFF,
+    # chance to dodge attacks
+    AURAS_END,
+    EVASION,
 }
 
 
@@ -226,7 +230,7 @@ func calc_lifesteal_health(damage: int) -> int:
 
 
 const PASSIVE_HEALTH_REGEN: int = 2  # HP/s
-
+const EVASION_DODGE_CHANCE: float = 0.15
 
 ################################################################################
 # Graphics and Animations
