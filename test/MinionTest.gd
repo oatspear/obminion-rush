@@ -95,4 +95,5 @@ func _spawn_projectile(scene, source, target):
     obj.position = source.position
     obj.target = target.position
     obj.power = source._calc_damage_output()
+    obj.weapon_type = source.weapon_type
     add_child(obj)

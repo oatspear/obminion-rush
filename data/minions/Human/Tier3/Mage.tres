@@ -15,6 +15,7 @@ attack_speed = 2
 attack_range = 64
 projectile = 2
 damage_type = 1
+weapon_type = 0
 armor_type = 0
 magic_resistance = 2
 ability = 0

@@ -152,6 +152,8 @@ func calc_attack_speed_bonus(speed: float) -> float:
 # Weapons and Armor
 ################################################################################
 
+enum WeaponTypes { NORMAL, SPLASH }
+
 const DAMAGE_DIVISOR: int = 5
 
 enum DamageTypes { PHYSICAL, MAGIC, HERO }
@@ -323,6 +325,9 @@ func get_collision_mask(team: int) -> int:
 func get_collision_mask_teams(team: int) -> int:
     assert(team > 0)
     return ALL_TEAMS_MASK ^ WORLD_MASK ^ (1 << team)
+
+func get_collision_mask_all_teams() -> int:
+    return ALL_TEAMS_MASK ^ WORLD_MASK
 
 
 enum Roles { MELEE, RANGED, CASTER, HEALER, TANK }

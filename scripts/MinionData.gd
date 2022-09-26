@@ -21,6 +21,7 @@ export (Global.AttackRanges) var attack_range: int = Global.AttackRanges.MELEE
 export (Global.Projectiles) var projectile: int = Global.Projectiles.NONE
 export (Global.DamageTypes) var damage_type: int = Global.DamageTypes.PHYSICAL
 
+export (Global.WeaponTypes) var weapon_type: int = Global.WeaponTypes.NORMAL
 export (Global.ArmorTypes) var armor_type: int = Global.ArmorTypes.LIGHT
 export (Global.MagicResistance) var magic_resistance: int = Global.MagicResistance.LIGHT
 

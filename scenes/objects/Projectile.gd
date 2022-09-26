@@ -14,6 +14,7 @@ const TRAVEL_MARGIN = 8  # pixels
 
 export (int) var team: int = 0
 export (int) var power: int = 1
+export (Global.WeaponTypes) var weapon_type: int = Global.WeaponTypes.NORMAL
 export (Global.DamageTypes) var damage_type: int = Global.DamageTypes.PHYSICAL
 export (float) var speed: float = 120  # pixels / sec
 export (float) var decay: float = 0.125  # secs
@@ -36,6 +37,10 @@ func do_effect():
         var t = collision_target.get_ref()
         if t:
             t.take_attack(power, damage_type, source)
+            if weapon_type == Global.WeaponTypes.SPLASH:
+                var splash = Global.calc_aura_damage_bonus(power)
+                for other in t._get_melee_allies():
+                    other.take_damage(splash, damage_type, source)
 
 
 ################################################################################

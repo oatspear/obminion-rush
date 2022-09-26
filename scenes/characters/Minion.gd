@@ -36,6 +36,7 @@ export (float) var attack_speed: float = 1.0  # sec
 export (Global.Projectiles) var projectile: int = Global.Projectiles.NONE
 export (bool) var follows_lane: bool = true
 export (int, 1, 5) var cost: int = Global.MIN_UNIT_COST
+export (Global.WeaponTypes) var weapon_type: int = Global.WeaponTypes.NORMAL
 export (Global.DamageTypes) var damage_type: int = Global.DamageTypes.PHYSICAL
 export (Global.ArmorTypes) var armor_type: int = Global.ArmorTypes.LIGHT
 export (Global.MagicResistance) var magic_resistance: int = Global.MagicResistance.LIGHT
@@ -160,6 +161,10 @@ func do_attack():
     if projectile == Global.Projectiles.NONE:
         var damage = _calc_damage_output()
         damage = target.take_attack(damage, damage_type, weakref(self))
+        if weapon_type == Global.WeaponTypes.SPLASH:
+            var splash = Global.calc_aura_damage_bonus(damage)
+            for other in target._get_melee_allies():
+                other.take_damage(splash, damage_type, weakref(self))
         if melee_lifesteal_effects > 0:
             damage = Global.calc_lifesteal_health(damage)
             heal(damage)
@@ -223,7 +228,7 @@ func _on_Sprite_animation_finished():
 func _ready():
     collision_layer = Global.get_collision_layer(team)
     collision_mask = Global.get_collision_mask(team)
-    range_area.collision_mask = Global.get_collision_mask_teams(team)
+    range_area.collision_mask = Global.get_collision_mask_all_teams()
     _init_from_data(base_data)
     health = max_health
     health_bar.set_value(health, max_health)
@@ -442,6 +447,7 @@ func _init_from_data(data: MinionData):
     attack_range = data.attack_range
     range_radius.shape.radius = max(Global.AGGRO_RANGE, attack_range)
     projectile = data.projectile
+    weapon_type = data.weapon_type
     damage_type = data.damage_type
     armor_type = data.armor_type
     magic_resistance = data.magic_resistance
@@ -503,6 +509,18 @@ func _check_for_enemies():
             continue
         return target
     return null
+
+
+func _get_melee_allies() -> Array:
+    var others = []
+    var r = Global.get_melee_range()
+    for target in range_area.get_overlapping_bodies():
+        if target == self or target.team != team or not target.is_alive():
+            continue
+        if position.distance_to(target.position) > r:
+            continue
+        others.append(target)
+    return others
 
 
 func _calc_damage_output() -> int:
