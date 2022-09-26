@@ -1,44 +1,6 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=2 format=2]
 
 [ext_resource path="res://test/Test.gd" type="Script" id=1]
-[ext_resource path="res://data/fonts/8BitWonder_Large.tres" type="DynamicFont" id=2]
-[ext_resource path="res://scenes/stages/CustomStage.tscn" type="PackedScene" id=3]
-[ext_resource path="res://scenes/ui/battle/BattleGUI.tscn" type="PackedScene" id=6]
 
 [node name="Test" type="Node2D"]
 script = ExtResource( 1 )
-
-[node name="Stage" parent="." instance=ExtResource( 3 )]
-
-[node name="BattleGUI" parent="." instance=ExtResource( 6 )]
-
-[node name="EnemyTimer" type="Timer" parent="."]
-wait_time = 3.5
-autostart = true
-
-[node name="WinGraphic" type="CanvasLayer" parent="."]
-layer = 5
-offset = Vector2( 0, -320 )
-transform = Transform2D( 1, 0, 0, 1, 0, -320 )
-
-[node name="CenterContainer" type="CenterContainer" parent="WinGraphic"]
-anchor_right = 1.0
-anchor_bottom = 1.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="Label" type="Label" parent="WinGraphic/CenterContainer"]
-margin_left = 12.0
-margin_top = 148.0
-margin_right = 168.0
-margin_bottom = 172.0
-custom_fonts/font = ExtResource( 2 )
-text = "Victory"
-
-[node name="Tween" type="Tween" parent="."]
-
-[connection signal="objective_captured" from="Stage" to="." method="_on_Stage_objective_captured"]
-[connection signal="area_selected" from="BattleGUI" to="." method="_on_BattleGUI_area_selected"]
-[connection signal="spawn_minion_requested" from="BattleGUI" to="." method="_on_BattleGUI_spawn_minion_requested"]
-[connection signal="timeout" from="EnemyTimer" to="." method="_on_EnemyTimer_timeout"]

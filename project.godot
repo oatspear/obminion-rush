@@ -9,12 +9,18 @@
 config_version=4
 
 _global_script_classes=[ {
+"base": "Reference",
+"class": "BattlePlayer",
+"language": "GDScript",
+"path": "res://scripts/BattlePlayer.gd"
+}, {
 "base": "Resource",
 "class": "MinionData",
 "language": "GDScript",
 "path": "res://scripts/MinionData.gd"
 } ]
 _global_script_class_icons={
+"BattlePlayer": "",
 "MinionData": ""
 }
 
