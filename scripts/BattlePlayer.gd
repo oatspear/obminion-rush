@@ -17,8 +17,11 @@ var roster: Array = []
 
 var coins: int = 0
 var score: int = 0
+var gold_mines: int = 0
 
 var next_minion: int = 0
+var income_timer: float = 0.0
+var income_rate: float = 0.0
 
 
 ################################################################################
@@ -36,3 +39,9 @@ func pick_next_minion():
 
 func get_next_minion():
     return minion_data[next_minion]
+
+
+func set_income_rate(rate: float):
+    income_rate = rate
+    if income_timer > rate:
+        income_timer = rate

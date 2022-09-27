@@ -58,9 +58,9 @@ func _process(delta: float):
 # Events
 ################################################################################
 
-func _on_hero_died():
+func _on_hero_died(killer):
     hero = null
-    emit_signal("captured")
+    emit_signal("captured", killer)
 
 
 func _on_HeroObjective_body_entered(body):

@@ -7,7 +7,7 @@
 
 [node name="Destructible" type="StaticBody2D"]
 collision_layer = 32
-collision_mask = 30
+collision_mask = 63
 script = ExtResource( 2 )
 
 [node name="Shape" type="CollisionShape2D" parent="."]

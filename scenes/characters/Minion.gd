@@ -18,7 +18,7 @@ enum FSM { IDLE, WALK, ATTACK, COOLDOWN, PURSUIT, DYING }
 signal spawn_projectile(projectile, source, target)
 signal took_damage(amount)
 signal healed_damage(amount)
-signal died()
+signal died(killer)
 
 
 ################################################################################
@@ -71,6 +71,7 @@ onready var sprite: AnimatedSprite = $Sprite
 onready var range_area: Area2D = $Range
 onready var range_radius: CollisionShape2D = $Range/Area
 onready var health_bar = $HealthBar
+onready var energy_bar = $EnergyBar
 onready var auras_node = $Auras
 
 
@@ -172,13 +173,18 @@ func do_attack():
         emit_signal("spawn_projectile", projectile, self, target)
 
 
-func heal(damage: int):
+func heal(damage: int) -> int:
     if health < max_health:
         health += damage
         if health > max_health:
             health = max_health
         emit_signal("healed_damage", damage)
-        print("Healed %d health" % damage)
+        return damage
+    return 0
+
+
+func set_energy(value: float, max_value: float):
+    energy_bar.set_value(value, max_value)
 
 
 ################################################################################
@@ -357,7 +363,11 @@ func _process_cooldown(delta: float):
     timer = 0
     var target = attack_target.get_ref()
     # if target and range_area.overlaps_body(target):
-    if target and position.distance_to(target.position) <= attack_range:
+    if (
+        target
+        and target.team != team
+        and position.distance_to(target.position) <= attack_range
+    ):
         _enter_attack(target)
         _process_attack(delta)
     else:
@@ -428,7 +438,7 @@ func _enter_dying():
     under_command = false
     velocity = Vector2.ZERO
     sprite.animation = Global.ANIM_DEATH
-    emit_signal("died")
+    emit_signal("died", null)
 
 
 ################################################################################

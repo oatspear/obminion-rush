@@ -29,3 +29,4 @@ func take_final_damage(damage: int, typed: int, source: WeakRef) -> int:
 func _ready():
     var aura = $Shadow
     aura.modulate = Global.get_team_colour(team_colour)
+    range_area.collision_mask = Global.get_collision_mask_teams_no_neutral(team)

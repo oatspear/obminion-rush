@@ -19,6 +19,7 @@ const SCORE_TIME_EARLY = 60.0 * 2  # first two minutes
 const SCORE_TIME_LATE = 60.0 * 5  # five minutes onward
 
 const INCOME_RATE = 2.5  # seconds for one coin
+const GOLD_MINE_INCOME_RATE_BONUS = 0.85
 
 ################################################################################
 # Variables
@@ -43,8 +44,6 @@ var _playing: bool = true
 
 var _playtime: float = 0
 
-onready var _income_timer: float = INCOME_RATE
-
 ################################################################################
 # Initialization
 ################################################################################
@@ -55,6 +54,7 @@ func set_stage(scene_name: String):
     var new_stage = scene.instance()
     new_stage.name = STAGE_NODE_NAME
     new_stage.connect("objective_captured", self, "_on_Stage_objective_captured")
+    new_stage.connect("resource_changed_owner", self, "_on_Stage_resource_changed_owner")
     add_child(new_stage)
     move_child(new_stage, 0)
 
@@ -62,6 +62,8 @@ func set_stage(scene_name: String):
 func _ready():
     for i in range(len(players)):
         players[i].team = i
+        players[i].income_rate = _calc_income_rate(players[i])
+        players[i].income_timer = players[i].income_rate
     _init_the_player()
     # _init_player(the_enemy)
 
@@ -85,12 +87,15 @@ func _init_the_player():
 func _process(delta):
     _playtime += delta
     var refresh = false
-    _income_timer -= delta
-    while _income_timer <= 0:
+    the_player.income_timer -= delta
+    while the_player.income_timer <= 0:
         the_player.coins += 1
-        the_enemy.coins += 1
-        _income_timer += INCOME_RATE
+        the_player.income_timer += the_player.income_rate
         refresh = true
+    the_enemy.income_timer -= delta
+    while the_enemy.income_timer <= 0:
+        the_enemy.coins += 1
+        the_enemy.income_timer += the_enemy.income_rate
     if refresh:
         gui.set_player_gold(the_player.coins)
 
@@ -153,6 +158,13 @@ func _spawn_heroes():
     the_enemy.hero_ref = weakref(minion)
 
 
+func _calc_income_rate(player: BattlePlayer) -> float:
+    var rate = INCOME_RATE
+    for i in range(player.gold_mines):
+        rate *= GOLD_MINE_INCOME_RATE_BONUS
+    return rate
+
+
 ################################################################################
 # Event Handlers
 ################################################################################
@@ -180,6 +192,24 @@ func _on_Stage_objective_captured(team: int):
     _np = tween.start()
     _playing = false
     gui.hide_all_inputs()
+
+
+func _on_Stage_resource_changed_owner(node, previous: int, current: int):
+    assert("GoldMine" in node.name)
+    match previous:
+        the_player.team:
+            assert(the_player.gold_mines > 0)
+            the_player.gold_mines -= 1
+        the_enemy.team:
+            assert(the_enemy.gold_mines > 0)
+            the_enemy.gold_mines -= 1
+    match current:
+        the_player.team:
+            the_player.gold_mines += 1
+            the_player.set_income_rate(_calc_income_rate(the_player))
+        the_enemy.team:
+            the_enemy.gold_mines += 1
+            the_enemy.set_income_rate(_calc_income_rate(the_enemy))
 
 
 func _on_BattleGUI_spawn_minion_requested(_i, unit_type):

@@ -10,6 +10,8 @@ position = Vector2( 2, 0 )
 cell_size = Vector2( 16, 16 )
 format = 1
 
+[node name="CapturePoints" type="Node" parent="."]
+
 [node name="Objects" type="TileMap" parent="."]
 position = Vector2( 2, 0 )
 cell_size = Vector2( 16, 16 )
@@ -28,5 +30,3 @@ format = 1
 [node name="Waypoints" type="Node" parent="."]
 
 [node name="Objectives" type="Node" parent="."]
-
-[node name="CapturePoints" type="Node" parent="."]

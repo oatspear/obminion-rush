@@ -298,7 +298,7 @@ func get_team_colour(team_colour: int):
             return Color(1.0, 1.0, 0.125, 0.5)
 
 
-const TEAM_STRINGS: Array = [
+const TEAM_COLOUR_STRINGS: Array = [
     "Neutral",
     "Red",
     "Blue",
@@ -308,31 +308,43 @@ const TEAM_STRINGS: Array = [
 
 func team2str(team: int) -> String:
     assert(team >= 0 and team < TeamColours.size())
-    return TEAM_STRINGS[team]
+    return TEAM_COLOUR_STRINGS[team]
 
 
-const WORLD_MASK = 1 << TeamColours.NONE
-const TEAM1 = 1
-const TEAM2 = 2
-const TEAM3 = 3
-const TEAM4 = 4
-const NEUTRAL_TEAM = 5
-const ALL_TEAMS_MASK = 0b111111
+enum Teams {
+    NEUTRAL_TEAM = 5,
+    TEAM1 = 1,
+    TEAM2 = 2,
+    TEAM3 = 3,
+    TEAM4 = 4
+}
+
+
+const WORLD_MASK = 1
+const ALL_TEAMS_MASK = 0b111110
+
 
 func get_collision_layer(team: int) -> int:
-    assert(team >= 0)
+    assert(team in Teams.values())
     return 1 << team
 
 func get_collision_mask(team: int) -> int:
-    assert(team >= 0)
-    return ALL_TEAMS_MASK ^ (1 << team)
+    assert(team in Teams.values())
+    return ALL_TEAMS_MASK ^ (1 << team) | WORLD_MASK
 
 func get_collision_mask_teams(team: int) -> int:
-    assert(team > 0)
-    return ALL_TEAMS_MASK ^ WORLD_MASK ^ (1 << team)
+    assert(team in Teams.values())
+    return ALL_TEAMS_MASK ^ (1 << team)
 
 func get_collision_mask_all_teams() -> int:
-    return ALL_TEAMS_MASK ^ WORLD_MASK
+    return ALL_TEAMS_MASK
+
+func get_collision_mask_teams_no_neutral(team: int) -> int:
+    assert(team in Teams.values())
+    if team == Teams.NEUTRAL_TEAM:
+        return ALL_TEAMS_MASK ^ (1 << team)
+    else:
+        return ALL_TEAMS_MASK ^ (1 << team) ^ (1 << Teams.NEUTRAL_TEAM)
 
 
 enum Roles { MELEE, RANGED, CASTER, HEALER, TANK }
