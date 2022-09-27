@@ -12,7 +12,7 @@ script = ExtResource( 3 )
 follows_lane = false
 move_speed = 30.0
 
-[node name="Aura" type="Sprite" parent="." index="0"]
+[node name="Shadow" type="Sprite" parent="." index="0"]
 modulate = Color( 1, 1, 1, 0.752941 )
 position = Vector2( 0, 2 )
 texture = ExtResource( 2 )

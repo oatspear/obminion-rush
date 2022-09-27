@@ -27,5 +27,5 @@ func take_final_damage(damage: int, typed: int, source: WeakRef) -> int:
 ################################################################################
 
 func _ready():
-    var aura = $Aura
+    var aura = $Shadow
     aura.modulate = Global.get_team_colour(team_colour)
