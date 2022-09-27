@@ -3,7 +3,7 @@
 [ext_resource path="res://scenes/stages/helpers/HeroObjective.gd" type="Script" id=1]
 
 [node name="HeroObjective" type="Area2D"]
-collision_layer = 32
+collision_layer = 1024
 collision_mask = 30
 script = ExtResource( 1 )
 

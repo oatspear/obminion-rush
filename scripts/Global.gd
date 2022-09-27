@@ -299,7 +299,7 @@ func get_team_colour(team_colour: int):
 
 
 const TEAM_STRINGS: Array = [
-    "Black",
+    "Neutral",
     "Red",
     "Blue",
     "Green",
@@ -312,7 +312,12 @@ func team2str(team: int) -> String:
 
 
 const WORLD_MASK = 1 << TeamColours.NONE
-const ALL_TEAMS_MASK = 0b11111
+const TEAM1 = 1
+const TEAM2 = 2
+const TEAM3 = 3
+const TEAM4 = 4
+const NEUTRAL_TEAM = 5
+const ALL_TEAMS_MASK = 0b111111
 
 func get_collision_layer(team: int) -> int:
     assert(team >= 0)

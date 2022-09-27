@@ -6,7 +6,7 @@
 [sub_resource type="CircleShape2D" id=1]
 
 [node name="Aura" type="Area2D"]
-collision_layer = 32768
+collision_layer = 1024
 script = ExtResource( 2 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

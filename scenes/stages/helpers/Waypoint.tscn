@@ -7,7 +7,7 @@ resource_local_to_scene = true
 
 [node name="Waypoint" type="Area2D"]
 monitorable = false
-collision_layer = 0
+collision_layer = 1024
 collision_mask = 30
 script = ExtResource( 1 )
 
