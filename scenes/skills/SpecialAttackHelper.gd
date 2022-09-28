@@ -28,6 +28,6 @@ func _process(delta: float):
 
 func _on_minion_attacking(target):
     if timer <= 0.0:
-        this_minion.emit_signal("spawn_area_effect", special_attack, this_minion, target.position)
+        this_minion.spawn_area_effect(special_attack, target.position)
         this_minion.attack_overriden = true
         timer = cooldown

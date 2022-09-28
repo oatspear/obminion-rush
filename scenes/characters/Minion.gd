@@ -195,6 +195,10 @@ func set_energy(value: float, max_value: float):
     energy_bar.set_value(value, max_value)
 
 
+func spawn_area_effect(ability: int, point: Vector2):
+    emit_signal("spawn_area_effect", ability, self, point)
+
+
 ################################################################################
 # Event Handlers
 ################################################################################
