@@ -85,6 +85,8 @@ func _init_the_player():
 ################################################################################
 
 func _process(delta):
+    if not _playing:
+        return
     _playtime += delta
     var refresh = false
     the_player.income_timer -= delta
@@ -98,14 +100,6 @@ func _process(delta):
         the_enemy.income_timer += the_enemy.income_rate
     if refresh:
         gui.set_player_gold(the_player.coins)
-
-
-func _randi(collection) -> int:
-    return randi() % len(collection)
-
-
-func _random_unit(team: Array):
-    return team[randi() % len(team)]
 
 
 func _on_spawn_projectile(projectile, source, target):
