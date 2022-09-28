@@ -240,7 +240,7 @@ func calc_lifesteal_health(damage: int) -> int:
 
 
 const PASSIVE_HEALTH_REGEN: int = 2  # HP/s
-const EVASION_DODGE_CHANCE: float = 0.15
+const EVASION_DODGE_CHANCE: float = 0.2
 
 ################################################################################
 # Graphics and Animations

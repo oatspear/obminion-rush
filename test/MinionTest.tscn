@@ -6,12 +6,10 @@
 script = ExtResource( 1 )
 minion1_race = 1
 minion1_tier = 2
-minion1_name = "Tank"
-num_minion1 = 2
+minion1_name = "Rogue"
 minion2_race = 1
 minion2_tier = 3
-minion2_name = "Archer"
-num_minion2 = 2
+minion2_name = "Mage"
 
 [node name="Spawn1" type="Position2D" parent="."]
 position = Vector2( 64, 224 )
