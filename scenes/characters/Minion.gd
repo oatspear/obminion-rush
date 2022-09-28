@@ -236,7 +236,6 @@ func _ready():
     collision_mask = Global.get_collision_mask(team)
     range_area.collision_mask = Global.get_collision_mask_all_teams()
     _init_from_data(base_data)
-    health = max_health
     health_bar.set_value(health, max_health)
     sprite.animation = Global.ANIM_IDLE
 
@@ -449,6 +448,7 @@ func _init_from_data(data: MinionData):
     sprite.frames = data.get_sprite_frames(team_colour)
     cost = data.cost
     max_health = Global.calc_health(data.health)
+    health = max_health
     power = Global.calc_power(data.power)
     # move_speed = Global.calc_move_speed(data.move_speed)
     move_speed = data.move_speed

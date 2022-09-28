@@ -56,19 +56,21 @@ enum HealthTiers {
     TIER5,
     TIER6,
     TIER7,
-    TIER8,
-    TIER9,
-    TIER10,
-    TIER11,
-    TIER12
+    TIER8
 }
 
 const HEALTH_FACTOR: int = 40
+const HERO_HEALTH_FACTOR: int = 100
 
 
 func calc_health(tier: int) -> int:
     assert(tier in HealthTiers.values())
     return HEALTH_FACTOR * tier
+
+
+func calc_hero_health(tier: int) -> int:
+    assert(tier in HealthTiers.values())
+    return HERO_HEALTH_FACTOR * tier
 
 
 ################################################################################
