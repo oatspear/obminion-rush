@@ -324,7 +324,8 @@ func _physics_process_walk(_delta):
 
 func _enter_attack(target: Node2D):
     # print(name, " --> ATTACK")
-    assert(target.team != team)
+    if target.team == team:
+        return _enter_idle()
     state = FSM.ATTACK
     attack_target = weakref(target)
     # sprite.animation = Global.ANIM_CAST if is_caster else Global.ANIM_ATTACK
@@ -419,13 +420,21 @@ func _physics_process_pursuit(delta: float):
         _enter_idle()
         return
     attack_waypoint = target.position
+    #var space_state = get_world_2d().direct_space_state
+    #var result = space_state.intersect_ray(
+    #    position,
+    #    attack_waypoint,
+    #    [self],
+    #    collision_mask
+    #)
+    #if result and result.collider.collision_layer == Global.WORLD_MASK:
+    #    _enter_idle()
+    #else:
     var moved = _physics_move_to(attack_waypoint)
     if not moved or velocity.length_squared() < 1:
         stuck_timer += delta
         if stuck_timer >= UNSTUCK_TRIGGER:
-            var _discard = cmd_move_to(leash)
-        #else:
-        #    _enter_idle()
+            _enter_idle()
 
 
 ################################################################################
