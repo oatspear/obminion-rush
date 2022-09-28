@@ -156,7 +156,6 @@ func take_final_damage(damage: int, typed: int, _source: WeakRef) -> int:
     if health <= 0:
         _enter_dying()
     health_bar.set_value(health, max_health)
-    print("%s (team %d) took %d damage" % [name, team, damage])
     return damage
 
 
