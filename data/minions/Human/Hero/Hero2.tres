@@ -18,4 +18,4 @@ damage_type = 2
 weapon_type = 1
 armor_type = 2
 magic_resistance = 2
-ability = 0
+ability = 15

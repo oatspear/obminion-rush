@@ -17,9 +17,11 @@ enum FSM { IDLE, WALK, ATTACK, COOLDOWN, PURSUIT, DYING }
 ################################################################################
 
 signal spawn_projectile(projectile, source, target)
+signal spawn_area_effect(ability, source, location)
 signal took_damage(amount)
 signal healed_damage(amount)
 signal died(killer)
+signal attacking(target)
 
 
 ################################################################################
@@ -68,6 +70,7 @@ var tick_timer: float = 0.0
 var velocity: Vector2 = Vector2.ZERO
 var leash: Vector2 = Vector2.ZERO
 var stuck_timer: float = 0.0
+var attack_overriden: bool = false
 
 onready var sprite: AnimatedSprite = $Sprite
 onready var range_area: Area2D = $Range
@@ -153,6 +156,7 @@ func take_final_damage(damage: int, typed: int, _source: WeakRef) -> int:
     if health <= 0:
         _enter_dying()
     health_bar.set_value(health, max_health)
+    print("%s (team %d) took %d damage" % [name, team, damage])
     return damage
 
 
@@ -161,8 +165,11 @@ func do_attack():
     var target = attack_target.get_ref()
     if not target:
         return
+    emit_signal("attacking", target)
+    if attack_overriden:
+        return
     if projectile == Global.Projectiles.NONE:
-        var damage = _calc_damage_output()
+        var damage = _calc_damage_output(damage_type)
         damage = target.take_attack(damage, damage_type, weakref(self))
         if weapon_type == Global.WeaponTypes.SPLASH:
             var splash = Global.calc_aura_damage_bonus(damage)
@@ -328,6 +335,7 @@ func _enter_attack(target: Node2D):
         return _enter_idle()
     state = FSM.ATTACK
     attack_target = weakref(target)
+    attack_overriden = false
     # sprite.animation = Global.ANIM_CAST if is_caster else Global.ANIM_ATTACK
     sprite.animation = Global.ANIM_ATTACK
     sprite.flip_h = target.position.x < position.x
@@ -549,20 +557,21 @@ func _get_melee_allies() -> Array:
     return others
 
 
-func _calc_damage_output() -> int:
+func _calc_damage_output(type_of_damage) -> int:
     var damage = power
-    if damage_type == Global.DamageTypes.PHYSICAL:
-        if physical_damage_bonuses > 0:
-            damage += Global.calc_aura_damage_bonus(damage)
-        elif physical_damage_bonuses < 0:
-            damage -= Global.calc_aura_damage_bonus(damage)
-            damage = max(1, damage)
-    elif damage_type == Global.DamageTypes.MAGIC:
-        if magic_damage_bonuses > 0:
-            damage += Global.calc_aura_damage_bonus(damage)
-        elif magic_damage_bonuses < 0:
-            damage -= Global.calc_aura_damage_bonus(damage)
-            damage = max(1, damage)
+    match type_of_damage:
+        Global.DamageTypes.PHYSICAL:
+            if physical_damage_bonuses > 0:
+                damage += Global.calc_aura_damage_bonus(damage)
+            elif physical_damage_bonuses < 0:
+                damage -= Global.calc_aura_damage_bonus(damage)
+                damage = max(1, damage)
+        Global.DamageTypes.MAGIC:
+            if magic_damage_bonuses > 0:
+                damage += Global.calc_aura_damage_bonus(damage)
+            elif magic_damage_bonuses < 0:
+                damage -= Global.calc_aura_damage_bonus(damage)
+                damage = max(1, damage)
     return damage
 
 

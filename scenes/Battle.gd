@@ -11,6 +11,9 @@ const SCN_ARROW = preload("res://scenes/objects/Arrow.tscn")
 const SCN_FIREBALL = preload("res://scenes/objects/Fireball.tscn")
 const SCN_MINION = preload("res://scenes/characters/Minion.tscn")
 const SCN_HERO = preload("res://scenes/characters/Hero.tscn")
+const SCN_AOE_DAMAGE_PHYSICAL = preload("res://scenes/skills/aoe/damage/Physical.tscn")
+const SCN_AOE_DAMAGE_FIRE = preload("res://scenes/skills/aoe/damage/Fire.tscn")
+const SCN_SP_ATTACK_HELPER = preload("res://scenes/skills/SpecialAttackHelper.tscn")
 
 const BUTTON_COOLDOWN = 1.5
 
@@ -112,15 +115,34 @@ func _on_spawn_projectile(projectile, source, target):
             pass
 
 
+func _on_spawn_area_effect(ability: int, caster, point: Vector2):
+    match ability:
+        Global.Abilities.AOE_DAMAGE_PHYSICAL:
+            _spawn_area_effect(SCN_AOE_DAMAGE_PHYSICAL, caster, point)
+        Global.Abilities.AOE_DAMAGE_FIRE:
+            _spawn_area_effect(SCN_AOE_DAMAGE_FIRE, caster, point)
+
+
 func _spawn_projectile(scene, source, target):
     var obj = scene.instance()
     obj.team = source.team
     obj.source = weakref(source)
-    obj.position = source.position
+    obj.position.x = source.position.x
+    obj.position.y = source.position.y
     obj.target = target.position
-    obj.power = source._calc_damage_output()
+    obj.power = source._calc_damage_output(source.damage_type)
     obj.weapon_type = source.weapon_type
     stage.spawn_object(obj)
+
+
+func _spawn_area_effect(scene, caster, point):
+    var obj = scene.instance()
+    obj.team = caster.team
+    obj.source = weakref(caster)
+    obj.position.x = point.x
+    obj.position.y = point.y
+    obj.power = caster._calc_damage_output(obj.damage_type)
+    stage.spawn_area_effect(obj)
 
 
 func _spawn_minion(base_data: MinionData, team: int, spawn: int):
@@ -129,6 +151,8 @@ func _spawn_minion(base_data: MinionData, team: int, spawn: int):
     minion.team_colour = players[team].team_colour
     minion.base_data = base_data
     minion.connect("spawn_projectile", self, "_on_spawn_projectile")
+    minion.connect("spawn_area_effect", self, "_on_spawn_area_effect")
+    _handle_ability(minion, base_data.ability)
     stage.spawn_minion(minion, spawn)
 
 
@@ -139,6 +163,8 @@ func _spawn_heroes():
     minion.team_colour = the_player.team_colour
     minion.base_data = the_player.hero_data
     minion.connect("spawn_projectile", self, "_on_spawn_projectile")
+    minion.connect("spawn_area_effect", self, "_on_spawn_area_effect")
+    _handle_ability(minion, the_player.hero_data.ability)
     stage.spawn_hero(minion)
     the_player.hero_ref = weakref(minion)
     # red
@@ -147,6 +173,8 @@ func _spawn_heroes():
     minion.team_colour = the_enemy.team_colour
     minion.base_data = the_enemy.hero_data
     minion.connect("spawn_projectile", self, "_on_spawn_projectile")
+    minion.connect("spawn_area_effect", self, "_on_spawn_area_effect")
+    _handle_ability(minion, the_enemy.hero_data.ability)
     minion.connect("took_damage", self, "_on_enemy_took_damage")
     stage.spawn_hero(minion)
     the_enemy.hero_ref = weakref(minion)
@@ -261,3 +289,13 @@ func _on_enemy_took_damage(amount: int, _typed: int):
         score = int(score * 0.75)
     the_player.score += score
     gui.set_player_score(the_player.score)
+
+
+func _handle_ability(minion, ability: int):
+    if (
+        ability > Global.Abilities.SPECIAL_ATTACKS_START
+        and ability < Global.Abilities.SPECIAL_ATTACKS_END
+    ):
+        var helper = SCN_SP_ATTACK_HELPER.instance()
+        helper.special_attack = ability
+        minion.add_child(helper)

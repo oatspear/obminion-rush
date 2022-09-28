@@ -14,6 +14,7 @@ signal resource_changed_owner(previous, current)
 onready var hero_spawns = {}
 onready var spawn_points = {}
 
+onready var ground_layer = $Background
 onready var object_layer = $Objects
 
 ################################################################################
@@ -48,6 +49,10 @@ func spawn_hero(minion):
 
 func spawn_object(obj):
     object_layer.add_child(obj)
+
+
+func spawn_area_effect(obj):
+    ground_layer.add_child(obj)
 
 
 ################################################################################

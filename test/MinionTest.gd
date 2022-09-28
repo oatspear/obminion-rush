@@ -7,6 +7,9 @@ extends Node2D
 const SCN_MINION: PackedScene = preload("res://scenes/characters/Minion.tscn")
 const SCN_ARROW = preload("res://scenes/objects/Arrow.tscn")
 const SCN_FIREBALL = preload("res://scenes/objects/Fireball.tscn")
+const SCN_AOE_DAMAGE_PHYSICAL = preload("res://scenes/skills/aoe/damage/Physical.tscn")
+const SCN_AOE_DAMAGE_FIRE = preload("res://scenes/skills/aoe/damage/Fire.tscn")
+const SCN_SP_ATTACK_HELPER = preload("res://scenes/skills/SpecialAttackHelper.tscn")
 
 const MINION_DATA_PATH = "res://data/minions/%s/Tier%d/%s.tres"
 
@@ -71,6 +74,14 @@ func _minion2_params() -> Array:
 func _spawn_minion(minion, data: MinionData, point: Position2D, waypoint: Position2D):
     minion.base_data = data
     minion.connect("spawn_projectile", self, "_on_spawn_projectile")
+    minion.connect("spawn_area_effect", self, "_on_spawn_area_effect")
+    if (
+        data.ability > Global.Abilities.SPECIAL_ATTACKS_START
+        and data.ability < Global.Abilities.SPECIAL_ATTACKS_END
+    ):
+        var helper = SCN_SP_ATTACK_HELPER.instance()
+        helper.special_attack = data.ability
+        minion.add_child(helper)
     minion.position.y = point.position.y
     var dx = randi() % 10 - 5
     minion.position.x = point.position.x + dx
@@ -84,16 +95,33 @@ func _on_spawn_projectile(projectile, source, target):
             _spawn_projectile(SCN_ARROW, source, target)
         Global.Projectiles.FIRE:
             _spawn_projectile(SCN_FIREBALL, source, target)
-        _:
-            pass
+
+
+func _on_spawn_area_effect(ability: int, caster, point: Vector2):
+    match ability:
+        Global.Abilities.AOE_DAMAGE_PHYSICAL:
+            _spawn_area_effect(SCN_AOE_DAMAGE_PHYSICAL, caster, point)
+        Global.Abilities.AOE_DAMAGE_FIRE:
+            _spawn_area_effect(SCN_AOE_DAMAGE_FIRE, caster, point)
 
 
 func _spawn_projectile(scene, source, target):
     var obj = scene.instance()
     obj.team = source.team
     obj.source = weakref(source)
-    obj.position = source.position
+    obj.position.x = source.position.x
+    obj.position.y = source.position.y
     obj.target = target.position
-    obj.power = source._calc_damage_output()
+    obj.power = source._calc_damage_output(source.damage_type)
     obj.weapon_type = source.weapon_type
+    add_child(obj)
+
+
+func _spawn_area_effect(scene, caster, point):
+    var obj = scene.instance()
+    obj.team = caster.team
+    obj.source = weakref(caster)
+    obj.position.x = point.x
+    obj.position.y = point.y
+    obj.power = caster._calc_damage_output(obj.damage_type)
     add_child(obj)

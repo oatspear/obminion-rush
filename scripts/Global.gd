@@ -226,6 +226,10 @@ enum Abilities {
     # chance to dodge attacks
     AURAS_END,
     EVASION,
+    SPECIAL_ATTACKS_START,
+    AOE_DAMAGE_PHYSICAL,
+    AOE_DAMAGE_FIRE,
+    SPECIAL_ATTACKS_END,
 }
 
 
