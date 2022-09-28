@@ -176,7 +176,7 @@ func do_attack():
                 other.take_damage(splash, damage_type, weakref(self))
         if melee_lifesteal_effects > 0:
             damage = Global.calc_lifesteal_health(damage)
-            heal(damage)
+            var _d = heal(damage)
     else:
         emit_signal("spawn_projectile", projectile, self, target)
 
@@ -583,4 +583,4 @@ func _process_ticks(delta: float):
     while tick_timer >= 1.0:
         tick_timer -= 1.0
         if health_regen_effects > 0:
-            heal(Global.PASSIVE_HEALTH_REGEN)
+            var _d = heal(Global.PASSIVE_HEALTH_REGEN)

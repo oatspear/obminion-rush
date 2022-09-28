@@ -63,7 +63,7 @@ func _start_effect():
     pass
 
 
-func _process_effect(delta: float):
+func _process_effect(_delta: float):
     pass
 
 
@@ -71,9 +71,9 @@ func _end_effect():
     pass
 
 
-func _on_body_entered_effect(body):
+func _on_body_entered_effect(_body):
     pass
 
 
-func _on_body_exited_effect(body):
+func _on_body_exited_effect(_body):
     pass

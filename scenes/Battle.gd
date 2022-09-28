@@ -182,7 +182,7 @@ func _spawn_heroes():
 
 func _calc_income_rate(player: BattlePlayer) -> float:
     var rate = INCOME_RATE
-    for i in range(player.gold_mines):
+    for _i in range(player.gold_mines):
         rate *= GOLD_MINE_INCOME_RATE_BONUS
     return rate
 
