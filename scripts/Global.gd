@@ -94,19 +94,21 @@ enum MovementSpeeds {
 ################################################################################
 
 enum AttackRanges {
-    MELEE = MINION_SIZE + 2,
-    SHORT = MINION_SIZE * 2,
-    MEDIUM = MINION_SIZE * 3,
-    LONG = MINION_SIZE * 4
+    MELEE = 0,  # 12
+    SHORT,      # 32
+    MEDIUM,     # 40
+    LONG,       # 48
+    VERY_LONG,  # 56
+    LONGEST     # 64
 }
 
 const ATTACK_RANGE_FACTOR: int = 8  # pixels per rank
-const MELEE_ATTACK_RANGE: int = 2  # small margin over two colliding bodies
+const MELEE_ATTACK_RANGE_MARGIN: int = 2  # small margin over two colliding bodies
 
 func calc_attack_range(tier: int) -> int:
     assert(tier in AttackRanges.values())
     if tier <= AttackRanges.MELEE:
-        return MINION_SIZE + MELEE_ATTACK_RANGE
+        return MINION_SIZE + MELEE_ATTACK_RANGE_MARGIN
     return 2 * MINION_SIZE + ATTACK_RANGE_FACTOR * (tier - 1)
 
 

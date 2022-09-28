@@ -7,6 +7,7 @@ extends KinematicBody2D
 const SCN_AURA = preload("res://scenes/skills/Aura.tscn")
 
 const EPSILON = 1.0
+const UNSTUCK_TRIGGER = 1.0  # seconds
 
 enum FSM { IDLE, WALK, ATTACK, COOLDOWN, PURSUIT, DYING }
 
@@ -66,6 +67,7 @@ var timer: float = 0.0
 var tick_timer: float = 0.0
 var velocity: Vector2 = Vector2.ZERO
 var leash: Vector2 = Vector2.ZERO
+var stuck_timer: float = 0.0
 
 onready var sprite: AnimatedSprite = $Sprite
 onready var range_area: Area2D = $Range
@@ -211,9 +213,10 @@ func _on_Range_body_exited(body):
     if not attack_target:
         return
     if body == attack_target.get_ref():
-        attack_target = null
-        if state == FSM.ATTACK or state == FSM.PURSUIT or state == FSM.COOLDOWN:
-            _enter_idle()
+        if position.distance_to(body.position) > attack_range:
+            attack_target = null
+            if state == FSM.ATTACK or state == FSM.PURSUIT or state == FSM.COOLDOWN:
+                _enter_idle()
 
 
 func _on_Sprite_animation_finished():
@@ -389,6 +392,7 @@ func _enter_pursuit(target: Node2D):
         state = FSM.PURSUIT
         leash.x = position.x
         leash.y = position.y
+        stuck_timer = 0.0
         attack_waypoint = target.position
         attack_target = weakref(target)
         sprite.animation = Global.ANIM_WALK
@@ -408,7 +412,7 @@ func _process_pursuit(delta: float):
         var _discard = cmd_move_to(leash)
 
 
-func _physics_process_pursuit(_delta):
+func _physics_process_pursuit(delta: float):
     assert(attack_target != null)
     var target = attack_target.get_ref()
     if not target:
@@ -417,7 +421,11 @@ func _physics_process_pursuit(_delta):
     attack_waypoint = target.position
     var moved = _physics_move_to(attack_waypoint)
     if not moved or velocity.length_squared() < 1:
-        _enter_idle()
+        stuck_timer += delta
+        if stuck_timer >= UNSTUCK_TRIGGER:
+            var _discard = cmd_move_to(leash)
+        #else:
+        #    _enter_idle()
 
 
 ################################################################################
@@ -453,9 +461,8 @@ func _init_from_data(data: MinionData):
     # move_speed = Global.calc_move_speed(data.move_speed)
     move_speed = data.move_speed
     attack_speed = Global.calc_attack_speed(data.attack_speed)
-    #attack_range = Global.calc_attack_range(data.attack_range)
-    attack_range = data.attack_range
-    range_radius.shape.radius = max(Global.AGGRO_RANGE, attack_range)
+    attack_range = Global.calc_attack_range(data.attack_range)
+    range_radius.shape.radius = Global.AGGRO_RANGE
     projectile = data.projectile
     weapon_type = data.weapon_type
     damage_type = data.damage_type
