@@ -27,6 +27,6 @@ const COLOUR_TEXTURES = {
 func set_owner_team(new_team: int, colour: int):
     team = new_team
     sprite.texture = COLOUR_TEXTURES[colour]
-    collision_layer = Global.get_collision_layer(team)
+    # collision_layer = Global.get_collision_layer(team)
     health = max_health
     health_bar.set_value(health, max_health)

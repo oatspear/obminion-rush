@@ -35,7 +35,7 @@ onready var collision_target: WeakRef = null
 func do_effect():
     if collision_target != null:
         var t = collision_target.get_ref()
-        if t:
+        if t and t.team != team:
             t.take_attack(power, damage_type, source)
             if weapon_type == Global.WeaponTypes.SPLASH:
                 var splash = Global.calc_aura_damage_bonus(power)
